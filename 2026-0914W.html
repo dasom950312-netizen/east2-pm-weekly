@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EAST2 퍼포먼스 마케팅 주간 성과 리포트 - 0914주차주차</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+--navy:#1f2937;
+--navy-2:#111827;
+--brand:#3454d1;
+--brand-light:#eef1fd;
+--good:#0e9f6e;
+--good-bg:#e7f9f1;
+--bad:#e02424;
+--bad-bg:#fdecec;
+--gray-50:#f9fafb;
+--gray-100:#f3f4f6;
+--gray-200:#e5e7eb;
+--gray-400:#9ca3af;
+--gray-500:#6b7280;
+--gray-700:#374151;
+--my:#f59e0b;
+--sg:#3b82f6;
+--radius:12px;
+--shadow:0 1px 3px rgba(17,24,39,.08), 0 1px 2px rgba(17,24,39,.04);
+}
+*{box-sizing:border-box;}
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Roboto,sans-serif;
+background:var(--gray-50);
+color:var(--navy-2);
+-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 80px;}
+header.top{background:linear-gradient(135deg,#1c2559,#3454d1);color:#fff;padding:28px 0 0;}
+header.top .wrap{padding-bottom:0;}
+.top-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;}
+.top-row h1{font-size:20px;margin:0 0 6px;font-weight:700;letter-spacing:-.2px;}
+.top-row .sub{font-size:13px;opacity:.85;margin:0;}
+.week-pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;white-space:nowrap;}
+.week-pill span{opacity:.75;font-weight:400;margin:0 4px;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0 -46px;}
+.kpi-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;color:var(--navy-2);}
+.kpi-card .label{font-size:12px;color:var(--gray-500);font-weight:600;margin-bottom:6px;}
+.kpi-card .value{font-size:22px;font-weight:800;letter-spacing:-.3px;}
+.kpi-card .delta{font-size:12px;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;}
+.delta.up{color:var(--good);background:var(--good-bg);}
+.delta.down{color:var(--bad);background:var(--bad-bg);}
+.delta.flat{color:var(--gray-500);background:var(--gray-100);}
+main{padding-top:64px;}
+nav.tabs{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--gray-200);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+nav.tabs .wrap{display:flex;gap:4px;padding:0 20px;overflow-x:auto;}
+nav.tabs button{border:none;background:none;cursor:pointer;padding:14px 16px;font-size:13.5px;font-weight:600;color:var(--gray-500);border-bottom:2.5px solid transparent;white-space:nowrap;}
+nav.tabs button.active{color:var(--brand);border-color:var(--brand);}
+nav.tabs button:hover{color:var(--brand);}
+section.tabpanel{display:none;padding-top:26px;}
+section.tabpanel.active{display:block;}
+h2.sec-title{font-size:16px;margin:0 0 4px;font-weight:800;color:var(--navy-2);}
+p.sec-desc{font-size:12.5px;color:var(--gray-500);margin:0 0 16px;}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:18px;}
+.insight-box{background:var(--brand-light);border:1px solid #dbe2fb;border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;}
+.insight-box h3{margin:0 0 8px;font-size:13px;color:var(--brand);font-weight:800;}
+.insight-box ul{margin:0;padding-left:18px;font-size:13px;line-height:1.9;color:var(--navy-2);}
+.insight-box b{color:var(--brand);}
+
+/* insight & next-to-do notes */
+.note-legend{background:#fdecec;border:1px solid #f3b4b4;border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:12px;color:#7a1f1f;line-height:1.8;}
+.note-legend b{color:#c81e1e;}
+.note-card{border:1px solid var(--gray-200);border-radius:12px;padding:16px 18px;margin-bottom:14px;}
+.note-card .note-title{font-size:13.5px;font-weight:800;color:var(--navy-2);margin-bottom:12px;}
+.note-block{margin-bottom:12px;}
+.note-block:last-child{margin-bottom:0;}
+.note-label{font-size:10.5px;font-weight:700;color:var(--gray-500);margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.note-fact{font-size:12.5px;line-height:1.75;color:var(--navy-2);margin:0;padding-left:18px;}
+.note-fact li{margin-bottom:3px;}
+.draft-tag{display:inline-block;font-size:9.5px;font-weight:800;color:#fff;background:#c81e1e;padding:2px 7px;border-radius:5px;letter-spacing:.2px;}
+.draft-box{background:#fdecec;border:1px dashed #f3b4b4;border-radius:8px;padding:10px 12px;}
+.draft-box p{margin:0 0 6px;font-size:12.5px;line-height:1.7;color:#c81e1e;font-weight:700;}
+.draft-box ol{margin:0;padding-left:18px;font-size:12.5px;line-height:1.75;color:#c81e1e;font-weight:700;}
+.draft-box li{margin-bottom:3px;}
+.rule-note{background:#fff9e6;border:1px solid #f4e2a1;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#7c5b00;line-height:1.8;}
+.rule-note b{color:#8a5a00;}
+.note-box{background:#f3f4f6;border:1px solid var(--gray-200);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--gray-700);line-height:1.8;}
+.grid-media{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+.country-block{margin-bottom:18px;}
+.country-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.flag-dot{width:9px;height:9px;border-radius:50%;}
+.flag-dot.my{background:var(--my);}
+.flag-dot.sg{background:var(--sg);}
+.country-head b{font-size:13.5px;}
+.country-head span{font-size:12px;color:var(--gray-500);}
+.ch-card{border:1px solid var(--gray-200);border-radius:10px;padding:13px 14px;}
+.ch-card .ch-name{font-size:12.5px;font-weight:700;color:var(--navy-2);display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ch-card .ch-total{font-size:11px;color:var(--gray-500);margin-bottom:10px;}
+.obj-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px dashed var(--gray-200);}
+.obj-row:first-of-type{border-top:none;}
+.obj-row .obj-label{font-size:11px;color:var(--gray-500);font-weight:600;}
+.obj-row .obj-metric{font-size:16px;font-weight:800;}
+.obj-row .obj-sub{font-size:10.5px;color:var(--gray-500);}
+.tag{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px;}
+.tag.roas{background:#eef1fd;color:var(--brand);}
+.tag.cpc{background:#fff4e5;color:#b45309;}
+.chart-wrap{position:relative;height:300px;}
+.chart-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;}
+.chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.promo-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.promo-tag{font-size:11.5px;background:var(--gray-100);border:1px solid var(--gray-200);padding:5px 10px;border-radius:999px;color:var(--gray-700);}
+.promo-tag b{color:var(--brand);}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{background:var(--navy-2);color:#fff;text-align:right;padding:9px 10px;font-weight:600;font-size:11.5px;position:sticky;top:0;}
+thead th:first-child, thead th:nth-child(2){text-align:left;}
+tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--gray-100);white-space:nowrap;}
+tbody td:first-child, tbody td:nth-child(2){text-align:left;white-space:normal;}
+tbody tr:hover{background:var(--gray-50);}
+.table-scroll{overflow-x:auto;max-height:640px;overflow-y:auto;}
+.num-up{color:var(--good);font-weight:700;}
+.num-down{color:var(--bad);font-weight:700;}
+.ctry-chip{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;}
+.ctry-chip.my{background:#fef3e2;color:#b45309;}
+.ctry-chip.sg{background:#e8f0fe;color:#1d4ed8;}
+.row-summary td{background:var(--brand-light);font-weight:700;color:var(--navy-2);border-bottom:1px solid #dbe2fb;}
+.row-off td{background:var(--gray-100);color:var(--gray-400);}
+.row-off td:first-child, .row-off td:nth-child(2){color:var(--gray-500);}
+.row-new td{background:#fefbe8;}
+.off-tag{font-size:10.5px;font-weight:800;color:var(--gray-400);background:var(--gray-200);padding:2px 8px;border-radius:5px;}
+.new-tag{font-size:10.5px;font-weight:800;color:#a16207;background:#fef3c7;padding:2px 8px;border-radius:5px;}
+.delta-best{background:rgba(34,197,94,0.2);padding:3px 9px;border-radius:6px;display:inline-block;}
+.delta-worst{background:rgba(239,68,68,0.16);padding:3px 9px;border-radius:6px;display:inline-block;}
+.grp-toggle-row td{background:#fff;padding:6px 10px;border-bottom:1px solid var(--gray-100);}
+.grp-toggle-btn{border:none;background:none;color:var(--brand);font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:2px 0;}
+.grp-toggle-btn .arrow{transition:transform .15s;font-size:10px;}
+.grp-toggle-btn.open .arrow{transform:rotate(90deg);}
+tr.grp-detail{display:none;}
+tr.grp-detail.open{display:table-row;}
+.subtabs{display:flex;gap:8px;margin-bottom:14px;}
+.subtabs button{border:1px solid var(--gray-200);background:#fff;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--gray-500);cursor:pointer;}
+.subtabs button.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+.gallery-filter{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.gallery-filter button{border:1px solid var(--gray-200);background:#fff;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--gray-500);cursor:pointer;}
+.gallery-filter button.active{background:var(--navy-2);color:#fff;border-color:var(--navy-2);}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start;}
+@media (min-width:901px){ .gallery-grid{grid-template-columns:repeat(4,minmax(0,1fr));} }
+.g-card{border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;background:#fff;}
+.g-thumb{height:150px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;position:relative;background:linear-gradient(135deg,#c7d2fe,#818cf8);background-color:#eef0fb;}
+.g-thumb.thumb-square{aspect-ratio:1/1;height:auto;}
+.g-thumb.thumb-vertical{aspect-ratio:9/16;height:auto;}
+.g-thumb.thumb-capture{aspect-ratio:3/4;height:auto;background-color:#f3f4f6;background-image:none!important;}
+.g-thumb.thumb-capture .capture-img{width:100%;height:100%;object-fit:contain;display:block;background:#f3f4f6;}
+.g-thumb.video::after{content:"▶";position:absolute;font-size:26px;color:#fff;opacity:.9;}
+.g-thumb small{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.35);padding:2px 7px;border-radius:5px;font-size:10px;}
+.g-rank{position:absolute;top:8px;left:8px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.92);}
+.g-rank.best{color:var(--good);}
+.g-rank.worst{color:var(--bad);}
+.g-body{padding:12px 13px;}
+.g-body .g-title{font-size:11.5px;font-weight:700;margin-bottom:6px;line-height:1.4;word-break:break-all;}
+.g-body .g-meta{font-size:11px;color:var(--gray-500);display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.g-body .g-metric{font-size:12.5px;font-weight:800;color:var(--brand);line-height:1.5;}
+.g-body .g-criteria{font-size:10px;color:var(--gray-400);line-height:1.5;margin-top:6px;border-top:1px dashed var(--gray-200);padding-top:6px;}
+.g-preview-btn{display:block;text-align:center;margin-top:9px;font-size:11.5px;font-weight:800;color:#fff;background:var(--brand);padding:6px 0;border-radius:6px;text-decoration:none;transition:opacity .15s;}
+.g-preview-btn:hover{opacity:.85;}
+.acc{border:1px solid var(--gray-200);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.acc-head{background:var(--gray-50);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:13px;font-weight:700;}
+.acc-head .arrow{transition:transform .15s;color:var(--gray-500);}
+.acc.open .acc-head .arrow{transform:rotate(90deg);}
+.acc-body{display:none;padding:14px 16px;}
+.acc.open .acc-body{display:block;}
+.legend-note{font-size:11.5px;color:var(--gray-500);margin-top:8px;display:flex;gap:16px;flex-wrap:wrap;}
+.legend-note span{display:inline-flex;align-items:center;gap:5px;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.dot.good{background:var(--good);} .dot.bad{background:var(--bad);}
+footer{text-align:center;font-size:11.5px;color:var(--gray-400);padding:30px 0 10px;}
+@media (max-width:900px){
+.kpi-row{grid-template-columns:repeat(2,1fr);}
+.grid-media{grid-template-columns:repeat(2,1fr);}
+.chart-grid, .chart-grid-2{grid-template-columns:1fr;}
+.gallery-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+<div class="wrap">
+<div class="top-row">
+<div>
+<h1 id="reportTitle">EAST2 퍼포먼스 마케팅 주간 성과 리포트</h1>
+<p class="sub">국가(말레이시아·싱가포르) x 매체(Meta·TikTok·Shopee Ads·Google) 성과 비교 · 전주 대비 금주</p>
+</div>
+<div class="week-pill">금주 09/14 – 09/20 <span>vs</span> 전주 09/07 – 09/13</div>
+</div>
+<div class="kpi-row" id="kpiRow"></div>
+</div>
+</header>
+
+<main>
+<nav class="tabs">
+<div class="wrap">
+<button class="tab-btn active" data-tab="overview">개요</button>
+<button class="tab-btn" data-tab="trend">트렌드</button>
+<button class="tab-btn" data-tab="campaign">캠페인 상세</button>
+<button class="tab-btn" data-tab="gallery">Best·Worst 소재</button>
+<button class="tab-btn" data-tab="insight">인사이트 & Next To-Do</button>
+<button class="tab-btn" data-tab="detail">국가별 상세 데이터</button>
+</div>
+</nav>
+
+<div class="wrap">
+
+<section class="tabpanel active" id="tab-overview">
+<div class="insight-box">
+<h3>이번 주 핵심 요약</h3>
+<ul id="insightList"></ul>
+</div>
+
+<div class="card">
+<h2 class="sec-title">국가 x 매체 성과 비교</h2>
+<p class="sec-desc">매체 카드는 전체(전환+트래픽) 지출·매출 기준으로 묶어서 보여주고, 목적이 섞여 있는 매체는 카드 안에서 전환/트래픽 지표를 각각 병기합니다.</p>
+<div class="rule-note">
+<b>캠페인 목적 판별 기준</b> — Meta: 캠페인 타입 <b>BR = 트래픽</b>, 그 외(OG/PR/TEST) = 전환 · TikTok: 매체명 <b>Tiktok = 트래픽</b>, <b>TiktokGMV = 전환</b> (Meta·TikTok 모두 카드 하나에 전환/트래픽 두 줄로 병기) · Shopee Ads·Google: 전환 100% · 싱가포르는 TikTok 미운영으로 매체 3개
+</div>
+<div id="countryChannelGrid"></div>
+<div class="legend-note">
+<span><span class="dot good"></span> 전주 대비 개선 (ROAS·매출 ↑ / CPC·CPA ↓)</span>
+<span><span class="dot bad"></span> 전주 대비 악화 (ROAS·매출 ↓ / CPC·CPA ↑)</span>
+</div>
+</div>
+</section>
+
+<section class="tabpanel" id="tab-trend">
+<div class="card">
+<h2 class="sec-title">일별 지출·매출·ROAS 트렌드</h2>
+<p class="sec-desc">막대: 지출/매출(좌측 축) · 선: ROAS(우측 축, %) · 전 매체·전 국가 합산 기준</p>
+<div class="chart-wrap" style="height:380px;"><canvas id="trendChart"></canvas></div>
+<div class="promo-tags" id="promoTags"></div>
+</div>
+
+<div class="card">
+<h2 class="sec-title">매체별 전주 대비 금주 비교</h2>
+<p class="sec-desc">전환 목적 매체는 ROAS, 트래픽 목적 매체는 CPC로 비교합니다 (MY+SG 합산). Meta·TikTok은 전환분과 트래픽분을 분리해서 집계했습니다.</p>
+<div class="chart-grid-2">
+<div class="chart-wrap"><canvas id="convRoasChart"></canvas></div>
+<div class="chart-wrap"><canvas id="trafficCpcChart"></canvas></div>
+</div>
+</div>
+</section>
+
+<section class="tabpanel" id="tab-campaign">
+<div class="card">
+<h2 class="sec-title">캠페인 목적별 성과 (전체 캠페인)</h2>
+<p class="sec-desc">동일 매체라도 캠페인 목적에 따라 우선 지표가 다릅니다 — 전환 캠페인은 ROAS, 트래픽 캠페인(Meta BR / TikTok)은 CPC 기준으로 정렬됩니다. 지출 큰 순.</p>
+<div class="subtabs">
+<button class="sub-btn active" data-sub="conv">전환 캠페인 (ROAS 우선) · <span id="convCount"></span>개</button>
+<button class="sub-btn" data-sub="traffic">트래픽 캠페인 (CPC 우선) · <span id="trafficCount"></span>개</button>
+</div>
+<div id="convSection">
+<p class="sec-desc" style="margin-bottom:10px;">기본적으로 국가x매체별 요약만 표시됩니다. 각 요약 아래 "상세 캠페인별 증감률 보기"를 누르면 개별 캠페인이 펼쳐집니다.</p>
+<div class="table-scroll" id="convTableWrap"></div>
+</div>
+<div class="table-scroll" id="trafficTableWrap" style="display:none;"></div>
+</div>
+</section>
+
+<section class="tabpanel" id="tab-gallery">
+<div class="card">
+<h2 class="sec-title">Best · Worst 소재</h2>
+<p class="sec-desc">전환 소재: 캠페인 내 지출 중위값 이상 + 구매 1건 이상 소재 중 ROAS 최고/최저 · 트래픽 소재: 캠페인 내 노출 상위 70% 소재 중 CPC 최저/최고. 각 카드 하단에 선정 기준을 함께 표기했습니다.</p>
+<div class="gallery-filter" id="galleryFilter"></div>
+<div class="gallery-grid" id="galleryGrid"></div>
+</div>
+</section>
+
+<section class="tabpanel" id="tab-insight">
+<div class="card">
+<h2 class="sec-title">인사이트 & Next To-Do</h2>
+<div class="note-legend">
+<b>사실(1차 데이터)</b>은 raw 데이터를 기반으로만 기입됩니다 · <b>빨간 굵은 글씨(AI 초안)</b>는 Claude가 제안한 원인 분석·Next To-Do 초안입니다 — 검토 후 다듬어서 최종 코멘트로 반영해주세요.
+</div>
+<div id="insightNotesWrap"></div>
+</div>
+</section>
+
+<section class="tabpanel" id="tab-detail">
+<div class="card">
+<h2 class="sec-title">국가별 상세 데이터</h2>
+<p class="sec-desc">국가별 전체 캠페인(전환/트래픽) 원자료입니다. 상품(SKU)별·인플루언서별 실적은 이번 raw data에 없어 제외했습니다 — 데이터 소스를 알려주시면 추가하겠습니다.</p>
+<div id="accordionWrap"></div>
+</div>
+</section>
+
+</div>
+</main>
+
+<footer>EAST2 퍼포먼스 마케팅 주간 성과 리포트 · 0914주차주차(2026-09-14~09-20) · Google Sheets(mint/shopee 탭) 원자료 기준 자동 생성</footer>
+
+<script>
+
+
+const DATA = {"title": "EAST2 퍼포먼스 마케팅 주간 성과 리포트", "week": {"current": "2026-09-14 ~ 2026-09-20", "previous": "2026-09-07 ~ 2026-09-13"}, "kpi": [{"label": "총 광고비", "value": "₩66,086,993", "delta": "-44.0%", "dir": "flat"}, {"label": "총 광고매출", "value": "₩522,009,344", "delta": "-38.8%", "dir": "down"}, {"label": "블렌디드 ROAS", "value": "789.9%", "delta": "+66.4%p", "dir": "up"}, {"label": "월 목표 매출 달성률", "value": "60.3%", "delta": "9월 누적(9/1~9/20) ₩2,057,630,403 / 목표 ₩3,410,000,000", "dir": "info"}], "insightSummary": ["이번 주 총 광고비 <b>₩66.1M(-44.0% WoW)</b>, 총 광고매출 <b>₩522.0M(-38.8% WoW)</b> — 지출이 매출보다 더 크게 줄며 블렌디드 ROAS는 <b>723.5% → 789.9%(+66.4%p)</b>로 개선. 전주(9/7~9/13)에 Payday·MegaSale 여진이 남아있었던 반면 이번 주는 프로모션 밀도가 낮아 지출 볼륨 자체가 축소된 영향이 커, 효율은 좋아졌지만 매출 볼륨 방어가 다음 주 과제.", "<b>SG Meta(전환)</b> ROAS <b>784.4% → 1176.8%(+50.0%)</b>로 전 그룹 중 개선폭 최대 — 지출은 ₩10.0M→₩4.2M로 줄었지만 매출 감소폭(-37.4%)이 지출 감소폭(-58.3%)보다 작아 효율이 크게 개선.", "<b>MY Shopee Ads</b> ROAS <b>1541.6% → 2032.6%(+31.9%)</b> — 지출 ₩13.9M→₩6.7M로 절반 이하로 줄었는데 매출은 ₩214.5M→₩136.7M로 상대적으로 덜 줄어 효율 개선.", "<b>MY TikTok GMV Max(전환)</b> ROAS <b>566.2% → 655.6%(+15.8%)</b>로 개선세 유지. 반면 <b>SG Shopee Ads</b>는 ROAS <b>1354.7% → 1310.4%(-3.3%)</b>로 유일하게 소폭 악화 — 지출(-45.3%)보다 매출 감소폭(-47.1%)이 더 커진 영향."], "insightNotes": [{"title": "① 전체 실적 — 지출 축소가 매출보다 커 ROAS는 개선, 볼륨은 방어 필요", "reviewed": false, "facts": ["총 광고비 ₩66,086,993 (전주 ₩117,916,731 대비 -44.0%)", "총 광고매출 ₩522,009,344 (전주 ₩853,141,013 대비 -38.8%)", "블렌디드 ROAS 789.9% (전주 723.5% 대비 +66.4%p)", "9월 누적(9/1~9/20) 매출 ₩2,057,630,403 / 9월 목표 ₩3,410,000,000 — 달성률 60.3%"], "analysis": "전주는 Payday(8/23~) 여진과 MegaSale(9/5~9/12)이 겹쳐 지출·매출 볼륨이 높았던 기저효과로 보임. 이번 주는 MidDaySale(9/13~9/19) 외 대형 프로모션이 없어 지출을 자연 감축한 결과 ROAS는 개선됐지만, 매출 볼륨 자체가 38.8% 줄어든 점은 월 목표 달성(60.3%, D-10 시점) 관점에서 리스크. 9월 잔여 10일간 누적 매출 갭 ₩1,352,369,597을 메우려면 하루 평균 매출이 최근 7일 평균(₩74.6M/일)의 약 1.8배 수준(₩135.2M/일)까지 올라와야 함.", "nextTodo": ["9월 말 목표 달성을 위해 잔여 10일간 필요한 일평균 매출(₩135.2M/일 수준)과 현재 execution 갭을 다솜님과 공유하고, 증액 가능한 예산 규모 논의", "ROAS가 좋아진 김에 효율 좋은 그룹(SG Meta, MY Shopee Ads)부터 우선적으로 예산 재투입 검토", "다음 주 프로모션 캘린더 확인 — 대형 세일 유무에 따라 지출 배분 사전 조정"]}, {"title": "② SG Meta(전환) — ROAS +50.0%, 개선폭 최대", "reviewed": false, "facts": ["지출 ₩4,171,318 (전주 ₩10,011,249 대비 -58.3%)", "매출 ₩49,088,691 (전주 ₩78,525,751 대비 -37.4%)", "ROAS 1176.8% (전주 784.4% 대비 +50.0%)"], "analysis": "지출을 절반 이하로 줄였음에도 매출 감소폭이 상대적으로 작아 효율이 크게 개선. 저효율 소재/타겟을 정리하고 고효율 캠페인 중심으로 예산이 재배분된 결과로 추정되며, 현재 예산 규모가 오히려 과소 투입 상태일 가능성.", "nextTodo": ["ROAS 1176.8%는 여유 있는 수준이므로 SG Meta 예산 증액 테스트 (+20~30%) 후 ROAS 방어 여부 확인", "이번 주 Best 소재(SG Meta) 콘셉트를 유사 크리에이티브로 확장 제작 검토"]}, {"title": "③ MY Shopee Ads — ROAS +31.9%, 지출 큰 폭 축소", "reviewed": false, "facts": ["지출 ₩6,726,632 (전주 ₩13,912,895 대비 -51.6%)", "매출 ₩136,728,805 (전주 ₩214,477,894 대비 -36.2%)", "ROAS 2032.6% (전주 1541.6% 대비 +31.9%)"], "analysis": "Shopee 자체 프로모션(9/9 결제일 등) 종료 이후 자연스러운 지출 감소 구간으로 보이며, ROAS가 2000%를 넘는 초고효율 상태. 다만 매출 볼륨도 함께 36% 줄어 전체 매출 목표 달성률(62.0%)에 부담.", "nextTodo": ["ROAS 2032.6% 수준이면 예산 증액 여력 충분 — 다음 주 Shopee Ads 예산 우선 증액 후보로 제안", "Shopee 자체 캠페인(할인/쿠폰) 일정과 광고 예산 집행 시점 동기화 필요 여부 점검"]}, {"title": "④ SG Shopee Ads — 유일하게 ROAS 소폭 악화(-3.3%)", "reviewed": false, "facts": ["지출 ₩5,503,094 (전주 ₩10,047,207 대비 -45.3%)", "매출 ₩72,113,715 (전주 ₩136,111,607 대비 -47.0%)", "ROAS 1310.4% (전주 1354.7% 대비 -3.3%)"], "analysis": "전체 그룹 중 유일하게 매출 감소폭(-47.0%)이 지출 감소폭(-45.3%)보다 커 ROAS가 소폭 하락. 절대 수준(1310%)은 여전히 높지만 다른 그룹 대비 추세가 역행하는 점은 확인 필요.", "nextTodo": ["SG Shopee Ads 캠페인/상품별 지출·매출 상세 확인 — 특정 캠페인의 오프(OFF) 또는 예산 소진 여부 점검", "타 국가(MY) Shopee Ads 대비 SG 전용 프로모션·쿠폰 세팅 차이 확인"]}], "countryMedia": [{"country": "MY", "media": "Meta", "mixed": true, "conv": {"spend": 19655507.0, "revenue": 127343092.0, "roas": 647.9, "roasPrev": 640.3}, "traffic": {"spend": 1716252.0, "revenue": 0, "clicks": 32203, "cpc": 53, "cpcPrev": 50}}, {"country": "SG", "media": "Meta", "mixed": true, "conv": {"spend": 4171318.0, "revenue": 49088691.0, "roas": 1176.8, "roasPrev": 784.4}, "traffic": {"spend": 257131.0, "revenue": 0, "clicks": 1006, "cpc": 256, "cpcPrev": 213}}, {"country": "MY", "media": "TikTok", "mixed": true, "conv": {"spend": 20855558.1, "revenue": 136735041.3, "roas": 655.6, "roasPrev": 566.2}, "traffic": {"spend": 7201501.2, "revenue": 0, "clicks": 78417, "cpc": 92, "cpcPrev": 97}}, {"country": "MY", "media": "Shopee Ads", "mixed": false, "conv": {"spend": 6726632.0, "revenue": 136728805.0, "roas": 2032.6, "roasPrev": 1541.6}}, {"country": "SG", "media": "Shopee Ads", "mixed": false, "conv": {"spend": 5503094.0, "revenue": 72113715.0, "roas": 1310.4, "roasPrev": 1354.7}}], "daily": {"dates": ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20"], "labels": ["09/14 (월)", "09/15 (화)", "09/16 (수)", "09/17 (목)", "09/18 (금)", "09/19 (토)", "09/20 (일)"], "spend": [11294672, 13581834, 11739277, 8345264, 7128336, 6998515, 6999094], "revenue": [86685992, 99107671, 83392630, 69416118, 66567836, 56658590, 60180507], "roas": [767.5, 729.7, 710.4, 831.8, 933.8, 809.6, 859.8]}, "promotions": [{"date": "09/13~09/19", "label": "[MY/SG] MidDaySale 진행 — 금주분 지출 MY ₩3,140,008·SG ₩1,397,773, 매출 MY ₩19,654,304·SG ₩12,289,247"}, {"date": "09/14~09/18", "label": "[MY] AffiliateBoost(트래픽) 진행 — 지출 ₩62,519 · 클릭 1,189"}], "mediaCompareConv": {"labels": ["Meta", "TikTok GMV Max", "Shopee Ads"], "roasThis": [740.5, 655.6, 1707.7], "roasPrev": [677.2, 566.2, 1463.2]}, "mediaCompareTraffic": {"labels": ["Meta (BR)", "TikTok"], "cpcThis": [59, 92], "cpcPrev": [60, 97]}, "campaignsConv": [{"name": "EAST_MY_Meta_Conversion_ATC_OG_CPAS-Shopee_UA_250919_NONE", "country": "MY", "channel": "Meta", "spend": 1074788.0, "revenue": 6322593.0, "spendPrev": 1187795.0, "roasThis": 588.3, "roasPrev": 572.6}, {"name": "EAST_MY_Meta_Conversion_PUR_OG_CPAS-Shopee_DailyPromotion_260501_NONE", "country": "MY", "channel": "Meta", "spend": 405539.0, "revenue": 7614886.0, "spendPrev": 350939.0, "roasThis": 1877.7, "roasPrev": 1894.4}, {"name": "EAST_MY_Meta_Conversion_PUR_OG_CPAS-Shopee_RT_251001_NONE", "country": "MY", "channel": "Meta", "spend": 5466636.0, "revenue": 31067324.0, "spendPrev": 5822784.0, "roasThis": 568.3, "roasPrev": 718.6}, {"name": "EAST_MY_Meta_Conversion_PUR_OG_CPAS-Shopee_UA_250919_NONE", "country": "MY", "channel": "Meta", "spend": 4598294.0, "revenue": 21372636.0, "spendPrev": 5255458.0, "roasThis": 464.8, "roasPrev": 538.7}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_MegaSale_260905_260912", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 6433755.0, "spendPrev": 10613720.0, "roasThis": 0.0, "roasPrev": 566.2}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_MiddaySale_260913_260919", "country": "MY", "channel": "Meta", "spend": 3140008.0, "revenue": 19654304.0, "spendPrev": 306440.0, "roasThis": 625.9, "roasPrev": 364.9}, {"name": "EAST_MY_Meta_Conversion_PUR_TEST_CPAS-Shopee_ChineseABTest_260129_NONE", "country": "MY", "channel": "Meta", "spend": 2750324.0, "revenue": 18487518.0, "spendPrev": 2811065.0, "roasThis": 672.2, "roasPrev": 690.6}, {"name": "EAST_MY_Meta_Conversion_PUR_TEST_CPAS-Shopee_UA-Catalog_260105_NONE", "country": "MY", "channel": "Meta", "spend": 1892701.0, "revenue": 14678809.0, "spendPrev": 2254651.0, "roasThis": 775.5, "roasPrev": 682.7}, {"name": "EAST_MY_Meta_Traffic_Click_PR_CPAS-Shopee_AffiliateBoost_260914_260918", "country": "MY", "channel": "Meta", "spend": 62519.0, "revenue": 191440.0, "spendPrev": 0.0, "roasThis": 306.2, "roasPrev": 0.0}, {"name": "EAST_MY_Meta_Traffic_Click_TEST_CPAS-Shopee_Threads_260801_260814", "country": "MY", "channel": "Meta", "spend": 264698.0, "revenue": 1519827.0, "spendPrev": 426935.0, "roasThis": 574.2, "roasPrev": 688.2}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_MerdekaSale_260828_260831", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_NewLaunchingEvent_260831_260905", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_MY_Meta_Conversion_PUR_TEST_CPAS-Shopee_Suncare_260604_NONE", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_SG_Meta_Conversion_PUR_OG_CPAS-Shopee_RT_250323_NONE", "country": "SG", "channel": "Meta", "spend": 952503.0, "revenue": 7445010.0, "spendPrev": 1790475.0, "roasThis": 781.6, "roasPrev": 666.8}, {"name": "EAST_SG_Meta_Conversion_PUR_OG_CPAS-Shopee_SpecialDay_260404_NONE", "country": "SG", "channel": "Meta", "spend": 400896.0, "revenue": 4610419.0, "spendPrev": 682299.0, "roasThis": 1150.0, "roasPrev": 848.6}, {"name": "EAST_SG_Meta_Conversion_PUR_OG_CPAS-Shopee_UA-LIN_250605_NONE", "country": "SG", "channel": "Meta", "spend": 460748.0, "revenue": 8488696.0, "spendPrev": 755815.0, "roasThis": 1842.4, "roasPrev": 898.5}, {"name": "EAST_SG_Meta_Conversion_PUR_PR_CPAS-Shopee_MegaSale_260906_260912", "country": "SG", "channel": "Meta", "spend": 0.0, "revenue": 2487585.0, "spendPrev": 4613125.0, "roasThis": 0.0, "roasPrev": 878.0}, {"name": "EAST_SG_Meta_Conversion_PUR_PR_CPAS-Shopee_MiddaySale_260913_260919", "country": "SG", "channel": "Meta", "spend": 1397773.0, "revenue": 12289247.0, "spendPrev": 206142.0, "roasThis": 879.2, "roasPrev": 450.0}, {"name": "EAST_SG_Meta_Conversion_PUR_TEST_CPAS-Shopee_UA-Catalog_251223_NONE", "country": "SG", "channel": "Meta", "spend": 585441.0, "revenue": 6659895.0, "spendPrev": 1242100.0, "roasThis": 1137.6, "roasPrev": 523.9}, {"name": "EAST_SG_Meta_Conversion_ROAS_OG_CPAS-Shopee_UA_260206_NONE", "country": "SG", "channel": "Meta", "spend": 373957.0, "revenue": 7107839.0, "spendPrev": 721293.0, "roasThis": 1900.7, "roasPrev": 661.8}, {"name": "EAST_SG_Meta_Conversion_ATC_OG_CPAS-Shopee_UA_250214_NONE", "country": "SG", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_SG_Meta_Conversion_PUR_PR_CPAS-Shopee_NewLaunchingEvent_260901_260905", "country": "SG", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_MY_TiktokGMV_LiveGVX_ROI_OG_TiktokShop_SKIN1004MY(1st)_250828_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 3926037.7, "revenue": 31906791.8, "spendPrev": 6336432.7, "roasThis": 812.7, "roasPrev": 819.5}, {"name": "EAST_MY_TiktokGMV_LiveGVX_ROI_OG_TiktokShop_skin1004my-Centella_260723_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 713545.3, "revenue": 4267595.8, "spendPrev": 953901.0, "roasThis": 598.1, "roasPrev": 490.3}, {"name": "EAST_MY_TiktokGMV_LiveGVX_ROI_OG_TiktokShop_skin1004my_official(2nd)_250909_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 1286911.6, "revenue": 10453592.5, "spendPrev": 2432960.4, "roasThis": 812.3, "roasPrev": 731.0}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_CNT-AmpouleFoam-125ml_250828_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 454385.1, "revenue": 2426122.4, "spendPrev": 997664.2, "roasThis": 533.9, "roasPrev": 450.9}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_HYC-SunSerum-50ml_250828_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 676962.0, "revenue": 4032710.5, "spendPrev": 1706422.9, "roasThis": 595.7, "roasPrev": 422.4}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_HYC-Sunserum-100ml_251017_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 810986.8, "revenue": 5101148.0, "spendPrev": 1546071.8, "roasThis": 629.0, "roasPrev": 531.0}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-BestSellers-Set_260304_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 1269816.6, "revenue": 8529037.4, "spendPrev": 2188501.9, "roasThis": 671.7, "roasPrev": 539.9}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-BrighteningRoutine-4pcsSet_260203_260203", "country": "MY", "channel": "TikTok GMV Max", "spend": 769958.8, "revenue": 4559236.5, "spendPrev": 1744715.7, "roasThis": 592.1, "roasPrev": 578.8}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-CNTLine-None_250902_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 1618554.6, "revenue": 9081889.7, "spendPrev": 2505101.3, "roasThis": 561.1, "roasPrev": 561.6}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-ClearNBright-AmpouleKit_260203_260203", "country": "MY", "channel": "TikTok GMV Max", "spend": 443786.2, "revenue": 2324236.2, "spendPrev": 1046555.9, "roasThis": 523.7, "roasPrev": 451.3}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-Expansion-MIX_260811_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 824662.8, "revenue": 4777710.6, "spendPrev": 1456152.1, "roasThis": 579.4, "roasPrev": 452.0}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-NewPAD-None_260601_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 396262.1, "revenue": 2114309.6, "spendPrev": 778164.4, "roasThis": 533.6, "roasPrev": 459.7}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-PORLine-None_251208_251208", "country": "MY", "channel": "TikTok GMV Max", "spend": 376431.9, "revenue": 1965583.1, "spendPrev": 743974.4, "roasThis": 522.2, "roasPrev": 486.3}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-PORLineSet_260619_260619", "country": "MY", "channel": "TikTok GMV Max", "spend": 906035.0, "revenue": 5843071.0, "spendPrev": 2053109.5, "roasThis": 644.9, "roasPrev": 544.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-PRCLine-None_250902_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 283093.2, "revenue": 1684883.2, "spendPrev": 719357.6, "roasThis": 595.2, "roasPrev": 541.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-SUN-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 780215.8, "revenue": 4770530.7, "spendPrev": 2111232.5, "roasThis": 611.4, "roasPrev": 483.6}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-TNBLine-None_250902_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 649951.9, "revenue": 3622088.6, "spendPrev": 915950.1, "roasThis": 557.3, "roasPrev": 457.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_POR-Ampoule-50ml_260120_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 515585.2, "revenue": 2714686.0, "spendPrev": 1147758.3, "roasThis": 526.5, "roasPrev": 428.3}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TECA-LINE-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 296769.2, "revenue": 2068495.0, "spendPrev": 437290.1, "roasThis": 697.0, "roasPrev": 438.9}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TIER1-LINE-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 2694172.0, "revenue": 17581865.6, "spendPrev": 5045760.2, "roasThis": 652.6, "roasPrev": 586.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TIER2-Bundle-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 356943.6, "revenue": 1996696.0, "spendPrev": 641746.3, "roasThis": 559.4, "roasPrev": 447.6}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TIER2-LINE-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 804490.7, "revenue": 4912761.1, "spendPrev": 1783350.4, "roasThis": 610.7, "roasPrev": 459.1}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@AbangOng-3_260910_260910", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 280699.9, "roasThis": 0.0, "roasPrev": 374.3}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@HelmiHeals_260907_260907", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 535757.3, "roasThis": 0.0, "roasPrev": 567.3}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@glassskin-5_260909_260909", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 1538550.0, "roasThis": 0.0, "roasPrev": 436.9}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@hvllic000-45_260909_260909", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 417118.0, "roasThis": 0.0, "roasPrev": 382.4}, {"name": "1.5 Tier", "country": "MY", "channel": "Shopee Ads", "spend": 771152.0, "revenue": 14017801.0, "spendPrev": 2467082.0, "roasThis": 1817.8, "roasPrev": 1353.0}, {"name": "Centella Tone Brightening Capsule Ampoule", "country": "MY", "channel": "Shopee Ads", "spend": 52161.0, "revenue": 1072567.0, "spendPrev": 360032.0, "roasThis": 2056.3, "roasPrev": 1176.7}, {"name": "HERO BUNDLE", "country": "MY", "channel": "Shopee Ads", "spend": 1825746.0, "revenue": 35989779.0, "spendPrev": 2017398.0, "roasThis": 1971.2, "roasPrev": 1815.4}, {"name": "Hyalu-Teca_All 2026-08", "country": "MY", "channel": "Shopee Ads", "spend": 473600.0, "revenue": 8297225.0, "spendPrev": 530182.0, "roasThis": 1751.9, "roasPrev": 1539.7}, {"name": "Live Ad 260211_260219", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 15597.0, "spendPrev": 124490.0, "roasThis": 0.0, "roasPrev": 1152.5}, {"name": "NEW LAUNCH", "country": "MY", "channel": "Shopee Ads", "spend": 101261.0, "revenue": 1543273.0, "spendPrev": 354653.0, "roasThis": 1524.1, "roasPrev": 1204.3}, {"name": "NEW LAUNCH 2026-07", "country": "MY", "channel": "Shopee Ads", "spend": 348739.0, "revenue": 7183381.0, "spendPrev": 582157.0, "roasThis": 2059.8, "roasPrev": 1403.3}, {"name": "PAD_All 2026-07", "country": "MY", "channel": "Shopee Ads", "spend": 136760.0, "revenue": 2738406.0, "spendPrev": 404950.0, "roasThis": 2002.3, "roasPrev": 1394.9}, {"name": "Potential SKU", "country": "MY", "channel": "Shopee Ads", "spend": 266682.0, "revenue": 5676381.0, "spendPrev": 830021.0, "roasThis": 2128.5, "roasPrev": 1513.9}, {"name": "SKIN1004 Double Cleanse, Double Calm Skin (Centella Light Cleansing Oil 200ml + Centella Ampoule Foam 125ml)", "country": "MY", "channel": "Shopee Ads", "spend": 41031.0, "revenue": 930009.0, "spendPrev": 94301.0, "roasThis": 2266.6, "roasPrev": 1474.7}, {"name": "SKIN1004 Madagascar Centella Soothing Cream 75ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 84696.0, "revenue": 1507499.0, "spendPrev": 282070.0, "roasThis": 1779.9, "roasPrev": 1328.4}, {"name": "SKIN1004 Madagascar Centella Teca_All", "country": "MY", "channel": "Shopee Ads", "spend": 298794.0, "revenue": 5509660.0, "spendPrev": 458464.0, "roasThis": 1844.0, "roasPrev": 1644.9}, {"name": "Search Brand Ad 2026-06-10", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Search Brand Ad 2026-07-01", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Search Brand Ad 2026-08-01_hyalu-teca", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Search Brand Ad 2026-09_LIN-PDRN", "country": "MY", "channel": "Shopee Ads", "spend": 637590.0, "revenue": 19354289.0, "spendPrev": 1336117.0, "roasThis": 3035.5, "roasPrev": 2102.7}, {"name": "Search Brand Ad 260224_260225", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Shop GMV Max", "country": "MY", "channel": "Shopee Ads", "spend": 312045.0, "revenue": 6775826.0, "spendPrev": 923137.0, "roasThis": 2171.4, "roasPrev": 1412.6}, {"name": "Sun_All 2026-07", "country": "MY", "channel": "Shopee Ads", "spend": 162404.0, "revenue": 3538679.0, "spendPrev": 376090.0, "roasThis": 2178.9, "roasPrev": 1426.3}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule Foam for Fine Dust Cleansing, Gentle and Soothing Daily Cleanser | 125ml [3]", "country": "MY", "channel": "Shopee Ads", "spend": 230785.0, "revenue": 4208752.0, "spendPrev": 421366.0, "roasThis": 1823.7, "roasPrev": 1595.2}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule for Deep and Instant Soothing, all skin type, for sensitive skin | 100ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 54704.0, "revenue": 1077867.0, "spendPrev": 176513.0, "roasThis": 1970.4, "roasPrev": 1917.4}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule for Deep and Instant Soothing, for all skin type, for sensitive skin | 55ml", "country": "MY", "channel": "Shopee Ads", "spend": 82056.0, "revenue": 1745409.0, "spendPrev": 244461.0, "roasThis": 2127.1, "roasPrev": 1489.1}, {"name": "[BEST] SKIN1004 Madagascar Centella Hyalu-cica Water-Fit Sun Serum SPF50 PA++++, No White Cast, Long-lasting | 100ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 112899.0, "revenue": 1974532.0, "spendPrev": 419638.0, "roasThis": 1748.9, "roasPrev": 1265.2}, {"name": "[BEST] SKIN1004 Madagascar Centella Hyalu-cica Water-Fit Sun Serum SPF50 PA++++, No White Cast, Long-lasting | 50ml [3]", "country": "MY", "channel": "Shopee Ads", "spend": 19759.0, "revenue": 401380.0, "spendPrev": 263957.0, "roasThis": 2031.4, "roasPrev": 1217.1}, {"name": "[BEST] SKIN1004 Madagascar Centella Light Cleansing Oil | Gentle Double Cleansing, for All Skin Type, Daily Use | 200ml [5]", "country": "MY", "channel": "Shopee Ads", "spend": 557253.0, "revenue": 9682825.0, "spendPrev": 643165.0, "roasThis": 1737.6, "roasPrev": 1684.3}, {"name": "[BEST] SKIN1004 Madagascar Centella Poremizing Velvet Finish Tinted Sunscreen SPF50 PA++++| Pore Blurring, Sebum Control [2]", "country": "MY", "channel": "Shopee Ads", "spend": 24395.0, "revenue": 516133.0, "spendPrev": 261536.0, "roasThis": 2115.7, "roasPrev": 1183.0}, {"name": "[BEST] SKIN1004 Madagascar Centella Probio-cica Intensive Ampoule for Wrinkle, Anti-ageing, Skin Barrier Repair | 95ml", "country": "MY", "channel": "Shopee Ads", "spend": 36385.0, "revenue": 1347964.0, "spendPrev": 182182.0, "roasThis": 3704.7, "roasPrev": 1230.9}, {"name": "[BEST] SKIN1004 Madagascar Centella Soothing Cream for Intensive Soothing, Moisture Lock, Barrier Strengthening | 30ml", "country": "MY", "channel": "Shopee Ads", "spend": 95735.0, "revenue": 1623571.0, "spendPrev": 158933.0, "roasThis": 1695.9, "roasPrev": 1490.1}, {"name": "[BEST] SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule for Brightening, Glow, Niacinamide | 100ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[SBD Buy 1 Get 1] SKIN1004 Centella Ampoule 100ml + Light Cleansing Oil 200ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[SBD Buy 1 Get 1] SKIN1004 Centella Ampoule Foam 125ml", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[SBD Buy 1 Get 1] SKIN1004 Centella Light Cleansing Oil 200ml", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "1.5 Tier", "country": "SG", "channel": "Shopee Ads", "spend": 386316.0, "revenue": 4910593.0, "spendPrev": 733487.0, "roasThis": 1271.1, "roasPrev": 1165.3}, {"name": "2.5 Tier", "country": "SG", "channel": "Shopee Ads", "spend": 751982.0, "revenue": 10294077.0, "spendPrev": 1014910.0, "roasThis": 1368.9, "roasPrev": 1414.6}, {"name": "BUNDLE", "country": "SG", "channel": "Shopee Ads", "spend": 451690.0, "revenue": 5546065.0, "spendPrev": 838034.0, "roasThis": 1227.8, "roasPrev": 1293.7}, {"name": "HERO SKU - Tier2", "country": "SG", "channel": "Shopee Ads", "spend": 248567.0, "revenue": 2999098.0, "spendPrev": 445351.0, "roasThis": 1206.6, "roasPrev": 1373.8}, {"name": "Hyalu-Teca_All 2026-08", "country": "SG", "channel": "Shopee Ads", "spend": 67772.0, "revenue": 894631.0, "spendPrev": 384208.0, "roasThis": 1320.1, "roasPrev": 1122.1}, {"name": "NEW LAUNCH 2026-09", "country": "SG", "channel": "Shopee Ads", "spend": 285635.0, "revenue": 2907400.0, "spendPrev": 351755.0, "roasThis": 1017.9, "roasPrev": 1185.2}, {"name": "Potential SKU", "country": "SG", "channel": "Shopee Ads", "spend": 1107352.0, "revenue": 14227183.0, "spendPrev": 1522362.0, "roasThis": 1284.8, "roasPrev": 1339.0}, {"name": "SKIN1004 Madagascar Centella Ampoule Foam 125ml (Cruelty-Free) [4]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Shop GMV Max", "country": "SG", "channel": "Shopee Ads", "spend": 660608.0, "revenue": 9013922.0, "spendPrev": 1727687.0, "roasThis": 1364.5, "roasPrev": 1403.5}, {"name": "Sun_All 2026-07", "country": "SG", "channel": "Shopee Ads", "spend": 422334.0, "revenue": 5134153.0, "spendPrev": 970910.0, "roasThis": 1215.7, "roasPrev": 1272.2}, {"name": "[BEST] SKIN1004 Madagascar Centella Hyalu-cica Water-Fit Sun Serum SPF50 PA++++, No White Cast, Long-lasting, Hydrating, Lightweight, for Daily Use | 50ml [6]", "country": "SG", "channel": "Shopee Ads", "spend": 768739.0, "revenue": 11183051.0, "spendPrev": 1699399.0, "roasThis": 1454.7, "roasPrev": 1485.9}, {"name": "[BEST] SKIN1004 Madagascar Centella Light Cleansing Oil for Gentle Double Cleansing, for All Skin Type, for Daily Use | 200ml [5]", "country": "SG", "channel": "Shopee Ads", "spend": 352099.0, "revenue": 5003542.0, "spendPrev": 359104.0, "roasThis": 1421.1, "roasPrev": 1540.3}, {"name": "[BEST] SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule for Brightening, Glow, Niacinamide, Dark Spot Care | 100ml [5]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "NEW LAUNCH", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "SKIN1004 Moisture-Boosting Sun Serum Set (Hyalu-Cica Water-Fit Sun Serum 50ml + Water-Fit Sun Serum 50ml) [4]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule for Deep and Instant Soothing, for all skin type, for sensitive skin | 55ml/100ml [5]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}], "campaignsTraffic": [{"name": "EAST_MY_Meta_Traffic_Click_BR_CPAS-Shopee_Partnership-Boosting_260406_NONE", "country": "MY", "channel": "Meta (BR)", "spend": 1716252.0, "clicks": 32203, "spendPrev": 1806243.0, "cpcThis": 53, "cpcPrev": 50}, {"name": "EAST_SG_Meta_Traffic_Click_BR_CPAS-Shopee_Partnership_260317_NONE", "country": "SG", "channel": "Meta (BR)", "spend": 257131.0, "clicks": 1006, "spendPrev": 513752.0, "cpcThis": 256, "cpcPrev": 213}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_Pulse-MBD_260806_260809", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_Pulse-NONECategory_260622_260628", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_Pulse_260619_260628", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_R&F_260603_260609", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_R&F_260622_260628", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Consideration_Consideration_BR_TiktokShop_UA_260101_260110", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Consideration_Consideration_BR_TiktokShop_UA_260202_NONE", "country": "MY", "channel": "TikTok", "spend": 7201501.2, "clicks": 78417, "spendPrev": 10531299.5, "cpcThis": 92, "cpcPrev": 97}, {"name": "EAST_MY_Tiktok_TF_RCH_BR_TiktokShop_TopFeed_260222_260225", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_VA_VIE_BR_TiktokShop_NONE_250909_NONE", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Engage_CommunityInteraction_BR_TiktokShop_UA_250829_250831", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}], "gallery": [{"rank": "BEST ROAS", "country": "MY", "channel": "Meta", "title": "COL-IMG_DailyPromotion-Sep_LIN_PDRN_CREAM_Product_Discount_1_1080x1080_NONE_EN_260831_260930", "type": "image", "img": "https://drive.google.com/thumbnail?id=1ubbbpW_x0pRc_pqxUwzzKKq2v0P2Z1H0&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBALkj3XqcNwn4pIoK2wHvx2tOlA3QX-NkJjEN5ZGjsuEI6mtgCZz86XaHuZXz16XYh633T-ZYFvRbg", "metric": "ROAS 2903.4% · 지출 ₩52,294 · 매출 ₩1,518,298", "tagClass": "good", "criteria": "캠페인 내 지출 중위값 이상(₩22,528) + 구매 1건 이상 소재 중 ROAS 최고"}, {"rank": "WORST", "country": "MY", "channel": "Meta", "title": "COL-IMG_OG_UIN_HYC-TECA_CREAM_Product_Discount_YOUNG-1-E1Best_1080x1080_NONE_EN_260826_NONE", "type": "image", "img": "https://drive.google.com/thumbnail?id=1h3MiPXIFCR2xo0Ona9cwOhD36aEMSgSr&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBAIp_XIXrS71VaOmrDGUjs_ctDZsobuzP3X2wiGuCna5f9dNUlax9Ettyokm-RgcMgXisBCI4Imm1A", "metric": "ROAS 118.7% · 지출 ₩71,779 · 매출 ₩85,228", "tagClass": "bad", "criteria": "캠페인 내 지출 중위값 이상(₩4,150) + 구매 1건 이상 소재 중 ROAS 최저"}, {"rank": "BEST ROAS", "country": "SG", "channel": "Meta", "title": "COL-VID_NewLaunching_UIN_POR_TRAVEL-KIT_Product_Discount_1_1080x1080_8s_EN_260526_NONE", "type": "video", "img": "https://drive.google.com/thumbnail?id=1c8YoRL46u0A5cgre62sEK887D_-2wrzX&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBAKAwCqJlHuySevr246ED_gkQHdRRlkkLFjbrnPV-pbn3lx0N4OYL9JoTxzAPK1QxRlmFLFN7oFBMA", "metric": "ROAS 3182.6% · 지출 ₩28,101 · 매출 ₩894,338", "tagClass": "good", "criteria": "캠페인 내 지출 중위값 이상(₩3,356) + 구매 1건 이상 소재 중 ROAS 최고"}, {"rank": "WORST", "country": "SG", "channel": "Meta", "title": "COL-IMG_OG_LIN_NAD_CREAM_Product_Discount_YOUNG-1_1080x1080_NONE_EN_260916_NONE", "type": "image", "img": "https://drive.google.com/thumbnail?id=1oferBVbqIQUhmM3G8NsqGssJpjQ37HBX&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBALrnRy8VrbEE_kdc_oiWNCMZb4k7SeejN16GyMD1y0xLgL-IbV2Z2yvaPBGqpZBpXqV4yKYXZGiJA", "metric": "ROAS 243.7% · 지출 ₩27,120 · 매출 ₩66,094", "tagClass": "bad", "criteria": "캠페인 내 지출 중위값 이상(₩3,356) + 구매 1건 이상 소재 중 ROAS 최저"}, {"rank": "BEST CPC", "country": "MY", "channel": "Meta", "title": "VID_OG_UIN_TNB_MIX_Influencer_Partnership_missmemey822_1080x1920_25s_EN_260713_NONE", "type": "video", "img": "https://drive.google.com/thumbnail?id=1AybXfzb0Yo3IH-PyuMOwXuOE9Ujz71o2&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBAI_2IS_sUniPbCAk-mKOUNQRsN7JucxR7t7GdmBUVtC6nhE9Xzaj2-pE_-mB1N7h3kwCkr2m49-1Q", "metric": "CPC ₩25 · 지출 ₩7,057 · 클릭 281", "tagClass": "good", "criteria": "캠페인 내 노출 상위 70%(30th pct 549 이상) + 클릭 10건 이상 소재 중 CPC 최저"}, {"rank": "WORST", "country": "MY", "channel": "Meta", "title": "VID_OG_UIN_HYC-TECA_MIX_Influencer_Partnership_r.e.i.j.i.n.n_1080x1920_45s_EN_260914_261013", "type": "video", "img": "https://drive.google.com/thumbnail?id=1uQv_5qjnQSeo8i3zwYiCGFdwUqiVhAU0&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBAJ5x84CLK38Jzig0XstHGcJslbelp7md-WHcZLjn78_9kOUnkg7pdx12kwba56SdEBnBnjnd8dNkA", "metric": "CPC ₩153 · 지출 ₩12,525 · 클릭 82", "tagClass": "bad", "criteria": "캠페인 내 노출 상위 70%(30th pct 549 이상) + 클릭 10건 이상 소재 중 CPC 최고"}, {"rank": "BEST CPC", "country": "SG", "channel": "Meta", "title": "VID_OG_MIX_MIX_SET_Influencer_Partnership_stkhalijahkarim-2_1080x1920_11s_EN_260317_NONE", "type": "video", "img": "https://drive.google.com/thumbnail?id=1f06VnNXp3Ge_z837nlRDW2zWyo63TtXw&sz=w640", "url": "https://business.facebook.com/ads/experience/confirmation/?is_responsive=0&encrypted_experience_id=Q8DfBAIVkXdkriPMy_YRGJr_WvnmiS2k8ZXTfaRilGQ4VESnZM-V1DOFYMs24xO-TVujfClngcQhQWqG", "metric": "CPC ₩243 · 지출 ₩48,130 · 클릭 198", "tagClass": "good", "criteria": "캠페인 내 노출 상위 70%(30th pct 1,569 이상) + 클릭 10건 이상 소재 중 CPC 최저"}, {"rank": "WORST", "country": "SG", "channel": "Meta", "title": "VID_OG_UIN_MIX_MIX_Influencer_Partnership_wony.ang3l-1_1080x1920_15s_EN_260320_NONE", "type": "video", "img": "https://drive.google.com/thumbnail?id=1OscAp1t8NQpA6A7gEll_I748K2sldf0l&sz=w640", "url": "https://fb.me/adspreview/facebook/1V46fC882MeIhfC", "metric": "CPC ₩300 · 지출 ₩36,608 · 클릭 122", "tagClass": "bad", "criteria": "캠페인 내 노출 상위 70%(30th pct 1,569 이상) + 클릭 10건 이상 소재 중 CPC 최고"}, {"rank": "BEST CPC", "country": "MY", "channel": "TikTok", "title": "@hvllic000/video/7650756982499986709_260630", "type": "video", "img": "https://drive.google.com/thumbnail?id=18DI9lpJniseWGvD8nuLFQLHGpnuCln88&sz=w640", "url": "https://tiknot.netlify.app/video/7650756982499986709", "metric": "CPC ₩32 · 지출 ₩142,853 · 클릭 4,454", "tagClass": "good", "criteria": "캠페인 내 노출 상위 70%(30th pct 0 이상) + 클릭 10건 이상 소재 중 CPC 최저"}, {"rank": "WORST", "country": "MY", "channel": "TikTok", "title": "@paperfarah/video/7678591545703976212_260910", "type": "video", "img": "https://drive.google.com/thumbnail?id=1-wte3MY47MQMayWTN-p5XlJtb9RgaC4J&sz=w640", "url": "https://tiknot.netlify.app/video/7678591545703976212", "metric": "CPC ₩2,856 · 지출 ₩91,380 · 클릭 32", "tagClass": "bad", "criteria": "캠페인 내 노출 상위 70%(30th pct 0 이상) + 클릭 10건 이상 소재 중 CPC 최고"}], "countries": {"MY": {"campaignsConv": [{"name": "EAST_MY_Meta_Conversion_ATC_OG_CPAS-Shopee_UA_250919_NONE", "country": "MY", "channel": "Meta", "spend": 1074788.0, "revenue": 6322593.0, "spendPrev": 1187795.0, "roasThis": 588.3, "roasPrev": 572.6}, {"name": "EAST_MY_Meta_Conversion_PUR_OG_CPAS-Shopee_DailyPromotion_260501_NONE", "country": "MY", "channel": "Meta", "spend": 405539.0, "revenue": 7614886.0, "spendPrev": 350939.0, "roasThis": 1877.7, "roasPrev": 1894.4}, {"name": "EAST_MY_Meta_Conversion_PUR_OG_CPAS-Shopee_RT_251001_NONE", "country": "MY", "channel": "Meta", "spend": 5466636.0, "revenue": 31067324.0, "spendPrev": 5822784.0, "roasThis": 568.3, "roasPrev": 718.6}, {"name": "EAST_MY_Meta_Conversion_PUR_OG_CPAS-Shopee_UA_250919_NONE", "country": "MY", "channel": "Meta", "spend": 4598294.0, "revenue": 21372636.0, "spendPrev": 5255458.0, "roasThis": 464.8, "roasPrev": 538.7}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_MegaSale_260905_260912", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 6433755.0, "spendPrev": 10613720.0, "roasThis": 0.0, "roasPrev": 566.2}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_MiddaySale_260913_260919", "country": "MY", "channel": "Meta", "spend": 3140008.0, "revenue": 19654304.0, "spendPrev": 306440.0, "roasThis": 625.9, "roasPrev": 364.9}, {"name": "EAST_MY_Meta_Conversion_PUR_TEST_CPAS-Shopee_ChineseABTest_260129_NONE", "country": "MY", "channel": "Meta", "spend": 2750324.0, "revenue": 18487518.0, "spendPrev": 2811065.0, "roasThis": 672.2, "roasPrev": 690.6}, {"name": "EAST_MY_Meta_Conversion_PUR_TEST_CPAS-Shopee_UA-Catalog_260105_NONE", "country": "MY", "channel": "Meta", "spend": 1892701.0, "revenue": 14678809.0, "spendPrev": 2254651.0, "roasThis": 775.5, "roasPrev": 682.7}, {"name": "EAST_MY_Meta_Traffic_Click_PR_CPAS-Shopee_AffiliateBoost_260914_260918", "country": "MY", "channel": "Meta", "spend": 62519.0, "revenue": 191440.0, "spendPrev": 0.0, "roasThis": 306.2, "roasPrev": 0.0}, {"name": "EAST_MY_Meta_Traffic_Click_TEST_CPAS-Shopee_Threads_260801_260814", "country": "MY", "channel": "Meta", "spend": 264698.0, "revenue": 1519827.0, "spendPrev": 426935.0, "roasThis": 574.2, "roasPrev": 688.2}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_MerdekaSale_260828_260831", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_MY_Meta_Conversion_PUR_PR_CPAS-Shopee_NewLaunchingEvent_260831_260905", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_MY_Meta_Conversion_PUR_TEST_CPAS-Shopee_Suncare_260604_NONE", "country": "MY", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_MY_TiktokGMV_LiveGVX_ROI_OG_TiktokShop_SKIN1004MY(1st)_250828_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 3926037.7, "revenue": 31906791.8, "spendPrev": 6336432.7, "roasThis": 812.7, "roasPrev": 819.5}, {"name": "EAST_MY_TiktokGMV_LiveGVX_ROI_OG_TiktokShop_skin1004my-Centella_260723_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 713545.3, "revenue": 4267595.8, "spendPrev": 953901.0, "roasThis": 598.1, "roasPrev": 490.3}, {"name": "EAST_MY_TiktokGMV_LiveGVX_ROI_OG_TiktokShop_skin1004my_official(2nd)_250909_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 1286911.6, "revenue": 10453592.5, "spendPrev": 2432960.4, "roasThis": 812.3, "roasPrev": 731.0}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_CNT-AmpouleFoam-125ml_250828_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 454385.1, "revenue": 2426122.4, "spendPrev": 997664.2, "roasThis": 533.9, "roasPrev": 450.9}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_HYC-SunSerum-50ml_250828_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 676962.0, "revenue": 4032710.5, "spendPrev": 1706422.9, "roasThis": 595.7, "roasPrev": 422.4}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_HYC-Sunserum-100ml_251017_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 810986.8, "revenue": 5101148.0, "spendPrev": 1546071.8, "roasThis": 629.0, "roasPrev": 531.0}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-BestSellers-Set_260304_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 1269816.6, "revenue": 8529037.4, "spendPrev": 2188501.9, "roasThis": 671.7, "roasPrev": 539.9}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-BrighteningRoutine-4pcsSet_260203_260203", "country": "MY", "channel": "TikTok GMV Max", "spend": 769958.8, "revenue": 4559236.5, "spendPrev": 1744715.7, "roasThis": 592.1, "roasPrev": 578.8}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-CNTLine-None_250902_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 1618554.6, "revenue": 9081889.7, "spendPrev": 2505101.3, "roasThis": 561.1, "roasPrev": 561.6}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-ClearNBright-AmpouleKit_260203_260203", "country": "MY", "channel": "TikTok GMV Max", "spend": 443786.2, "revenue": 2324236.2, "spendPrev": 1046555.9, "roasThis": 523.7, "roasPrev": 451.3}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-Expansion-MIX_260811_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 824662.8, "revenue": 4777710.6, "spendPrev": 1456152.1, "roasThis": 579.4, "roasPrev": 452.0}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-NewPAD-None_260601_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 396262.1, "revenue": 2114309.6, "spendPrev": 778164.4, "roasThis": 533.6, "roasPrev": 459.7}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-PORLine-None_251208_251208", "country": "MY", "channel": "TikTok GMV Max", "spend": 376431.9, "revenue": 1965583.1, "spendPrev": 743974.4, "roasThis": 522.2, "roasPrev": 486.3}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-PORLineSet_260619_260619", "country": "MY", "channel": "TikTok GMV Max", "spend": 906035.0, "revenue": 5843071.0, "spendPrev": 2053109.5, "roasThis": 644.9, "roasPrev": 544.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-PRCLine-None_250902_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 283093.2, "revenue": 1684883.2, "spendPrev": 719357.6, "roasThis": 595.2, "roasPrev": 541.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-SUN-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 780215.8, "revenue": 4770530.7, "spendPrev": 2111232.5, "roasThis": 611.4, "roasPrev": 483.6}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_MIX-TNBLine-None_250902_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 649951.9, "revenue": 3622088.6, "spendPrev": 915950.1, "roasThis": 557.3, "roasPrev": 457.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_POR-Ampoule-50ml_260120_NONE", "country": "MY", "channel": "TikTok GMV Max", "spend": 515585.2, "revenue": 2714686.0, "spendPrev": 1147758.3, "roasThis": 526.5, "roasPrev": 428.3}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TECA-LINE-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 296769.2, "revenue": 2068495.0, "spendPrev": 437290.1, "roasThis": 697.0, "roasPrev": 438.9}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TIER1-LINE-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 2694172.0, "revenue": 17581865.6, "spendPrev": 5045760.2, "roasThis": 652.6, "roasPrev": 586.5}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TIER2-Bundle-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 356943.6, "revenue": 1996696.0, "spendPrev": 641746.3, "roasThis": 559.4, "roasPrev": 447.6}, {"name": "EAST_MY_TiktokGMV_ProductGVX_ROI_OG_TiktokShop_TIER2-LINE-MIX_260710_260710", "country": "MY", "channel": "TikTok GMV Max", "spend": 804490.7, "revenue": 4912761.1, "spendPrev": 1783350.4, "roasThis": 610.7, "roasPrev": 459.1}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@AbangOng-3_260910_260910", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 280699.9, "roasThis": 0.0, "roasPrev": 374.3}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@HelmiHeals_260907_260907", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 535757.3, "roasThis": 0.0, "roasPrev": 567.3}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@glassskin-5_260909_260909", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 1538550.0, "roasThis": 0.0, "roasPrev": 436.9}, {"name": "EAST_MY_TiktokGMV_AffiliateGVX_ROI_OG_TiktokShop_@hvllic000-45_260909_260909", "country": "MY", "channel": "TikTok GMV Max", "spend": 0.0, "revenue": 0.0, "spendPrev": 417118.0, "roasThis": 0.0, "roasPrev": 382.4}, {"name": "1.5 Tier", "country": "MY", "channel": "Shopee Ads", "spend": 771152.0, "revenue": 14017801.0, "spendPrev": 2467082.0, "roasThis": 1817.8, "roasPrev": 1353.0}, {"name": "Centella Tone Brightening Capsule Ampoule", "country": "MY", "channel": "Shopee Ads", "spend": 52161.0, "revenue": 1072567.0, "spendPrev": 360032.0, "roasThis": 2056.3, "roasPrev": 1176.7}, {"name": "HERO BUNDLE", "country": "MY", "channel": "Shopee Ads", "spend": 1825746.0, "revenue": 35989779.0, "spendPrev": 2017398.0, "roasThis": 1971.2, "roasPrev": 1815.4}, {"name": "Hyalu-Teca_All 2026-08", "country": "MY", "channel": "Shopee Ads", "spend": 473600.0, "revenue": 8297225.0, "spendPrev": 530182.0, "roasThis": 1751.9, "roasPrev": 1539.7}, {"name": "Live Ad 260211_260219", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 15597.0, "spendPrev": 124490.0, "roasThis": 0.0, "roasPrev": 1152.5}, {"name": "NEW LAUNCH", "country": "MY", "channel": "Shopee Ads", "spend": 101261.0, "revenue": 1543273.0, "spendPrev": 354653.0, "roasThis": 1524.1, "roasPrev": 1204.3}, {"name": "NEW LAUNCH 2026-07", "country": "MY", "channel": "Shopee Ads", "spend": 348739.0, "revenue": 7183381.0, "spendPrev": 582157.0, "roasThis": 2059.8, "roasPrev": 1403.3}, {"name": "PAD_All 2026-07", "country": "MY", "channel": "Shopee Ads", "spend": 136760.0, "revenue": 2738406.0, "spendPrev": 404950.0, "roasThis": 2002.3, "roasPrev": 1394.9}, {"name": "Potential SKU", "country": "MY", "channel": "Shopee Ads", "spend": 266682.0, "revenue": 5676381.0, "spendPrev": 830021.0, "roasThis": 2128.5, "roasPrev": 1513.9}, {"name": "SKIN1004 Double Cleanse, Double Calm Skin (Centella Light Cleansing Oil 200ml + Centella Ampoule Foam 125ml)", "country": "MY", "channel": "Shopee Ads", "spend": 41031.0, "revenue": 930009.0, "spendPrev": 94301.0, "roasThis": 2266.6, "roasPrev": 1474.7}, {"name": "SKIN1004 Madagascar Centella Soothing Cream 75ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 84696.0, "revenue": 1507499.0, "spendPrev": 282070.0, "roasThis": 1779.9, "roasPrev": 1328.4}, {"name": "SKIN1004 Madagascar Centella Teca_All", "country": "MY", "channel": "Shopee Ads", "spend": 298794.0, "revenue": 5509660.0, "spendPrev": 458464.0, "roasThis": 1844.0, "roasPrev": 1644.9}, {"name": "Search Brand Ad 2026-06-10", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Search Brand Ad 2026-07-01", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Search Brand Ad 2026-08-01_hyalu-teca", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Search Brand Ad 2026-09_LIN-PDRN", "country": "MY", "channel": "Shopee Ads", "spend": 637590.0, "revenue": 19354289.0, "spendPrev": 1336117.0, "roasThis": 3035.5, "roasPrev": 2102.7}, {"name": "Search Brand Ad 260224_260225", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Shop GMV Max", "country": "MY", "channel": "Shopee Ads", "spend": 312045.0, "revenue": 6775826.0, "spendPrev": 923137.0, "roasThis": 2171.4, "roasPrev": 1412.6}, {"name": "Sun_All 2026-07", "country": "MY", "channel": "Shopee Ads", "spend": 162404.0, "revenue": 3538679.0, "spendPrev": 376090.0, "roasThis": 2178.9, "roasPrev": 1426.3}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule Foam for Fine Dust Cleansing, Gentle and Soothing Daily Cleanser | 125ml [3]", "country": "MY", "channel": "Shopee Ads", "spend": 230785.0, "revenue": 4208752.0, "spendPrev": 421366.0, "roasThis": 1823.7, "roasPrev": 1595.2}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule for Deep and Instant Soothing, all skin type, for sensitive skin | 100ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 54704.0, "revenue": 1077867.0, "spendPrev": 176513.0, "roasThis": 1970.4, "roasPrev": 1917.4}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule for Deep and Instant Soothing, for all skin type, for sensitive skin | 55ml", "country": "MY", "channel": "Shopee Ads", "spend": 82056.0, "revenue": 1745409.0, "spendPrev": 244461.0, "roasThis": 2127.1, "roasPrev": 1489.1}, {"name": "[BEST] SKIN1004 Madagascar Centella Hyalu-cica Water-Fit Sun Serum SPF50 PA++++, No White Cast, Long-lasting | 100ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 112899.0, "revenue": 1974532.0, "spendPrev": 419638.0, "roasThis": 1748.9, "roasPrev": 1265.2}, {"name": "[BEST] SKIN1004 Madagascar Centella Hyalu-cica Water-Fit Sun Serum SPF50 PA++++, No White Cast, Long-lasting | 50ml [3]", "country": "MY", "channel": "Shopee Ads", "spend": 19759.0, "revenue": 401380.0, "spendPrev": 263957.0, "roasThis": 2031.4, "roasPrev": 1217.1}, {"name": "[BEST] SKIN1004 Madagascar Centella Light Cleansing Oil | Gentle Double Cleansing, for All Skin Type, Daily Use | 200ml [5]", "country": "MY", "channel": "Shopee Ads", "spend": 557253.0, "revenue": 9682825.0, "spendPrev": 643165.0, "roasThis": 1737.6, "roasPrev": 1684.3}, {"name": "[BEST] SKIN1004 Madagascar Centella Poremizing Velvet Finish Tinted Sunscreen SPF50 PA++++| Pore Blurring, Sebum Control [2]", "country": "MY", "channel": "Shopee Ads", "spend": 24395.0, "revenue": 516133.0, "spendPrev": 261536.0, "roasThis": 2115.7, "roasPrev": 1183.0}, {"name": "[BEST] SKIN1004 Madagascar Centella Probio-cica Intensive Ampoule for Wrinkle, Anti-ageing, Skin Barrier Repair | 95ml", "country": "MY", "channel": "Shopee Ads", "spend": 36385.0, "revenue": 1347964.0, "spendPrev": 182182.0, "roasThis": 3704.7, "roasPrev": 1230.9}, {"name": "[BEST] SKIN1004 Madagascar Centella Soothing Cream for Intensive Soothing, Moisture Lock, Barrier Strengthening | 30ml", "country": "MY", "channel": "Shopee Ads", "spend": 95735.0, "revenue": 1623571.0, "spendPrev": 158933.0, "roasThis": 1695.9, "roasPrev": 1490.1}, {"name": "[BEST] SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule for Brightening, Glow, Niacinamide | 100ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[SBD Buy 1 Get 1] SKIN1004 Centella Ampoule 100ml + Light Cleansing Oil 200ml [2]", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[SBD Buy 1 Get 1] SKIN1004 Centella Ampoule Foam 125ml", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[SBD Buy 1 Get 1] SKIN1004 Centella Light Cleansing Oil 200ml", "country": "MY", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}], "campaignsTraffic": [{"name": "EAST_MY_Meta_Traffic_Click_BR_CPAS-Shopee_Partnership-Boosting_260406_NONE", "country": "MY", "channel": "Meta (BR)", "spend": 1716252.0, "clicks": 32203, "spendPrev": 1806243.0, "cpcThis": 53, "cpcPrev": 50}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_Pulse-MBD_260806_260809", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_Pulse-NONECategory_260622_260628", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_Pulse_260619_260628", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_R&F_260603_260609", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Awareness_Reach_BR_TiktokShop_R&F_260622_260628", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Consideration_Consideration_BR_TiktokShop_UA_260101_260110", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Consideration_Consideration_BR_TiktokShop_UA_260202_NONE", "country": "MY", "channel": "TikTok", "spend": 7201501.2, "clicks": 78417, "spendPrev": 10531299.5, "cpcThis": 92, "cpcPrev": 97}, {"name": "EAST_MY_Tiktok_TF_RCH_BR_TiktokShop_TopFeed_260222_260225", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_VA_VIE_BR_TiktokShop_NONE_250909_NONE", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}, {"name": "EAST_MY_Tiktok_Engage_CommunityInteraction_BR_TiktokShop_UA_250829_250831", "country": "MY", "channel": "TikTok", "spend": 0.0, "clicks": 0, "spendPrev": 0.0, "cpcThis": 0, "cpcPrev": 0}]}, "SG": {"campaignsConv": [{"name": "EAST_SG_Meta_Conversion_PUR_OG_CPAS-Shopee_RT_250323_NONE", "country": "SG", "channel": "Meta", "spend": 952503.0, "revenue": 7445010.0, "spendPrev": 1790475.0, "roasThis": 781.6, "roasPrev": 666.8}, {"name": "EAST_SG_Meta_Conversion_PUR_OG_CPAS-Shopee_SpecialDay_260404_NONE", "country": "SG", "channel": "Meta", "spend": 400896.0, "revenue": 4610419.0, "spendPrev": 682299.0, "roasThis": 1150.0, "roasPrev": 848.6}, {"name": "EAST_SG_Meta_Conversion_PUR_OG_CPAS-Shopee_UA-LIN_250605_NONE", "country": "SG", "channel": "Meta", "spend": 460748.0, "revenue": 8488696.0, "spendPrev": 755815.0, "roasThis": 1842.4, "roasPrev": 898.5}, {"name": "EAST_SG_Meta_Conversion_PUR_PR_CPAS-Shopee_MegaSale_260906_260912", "country": "SG", "channel": "Meta", "spend": 0.0, "revenue": 2487585.0, "spendPrev": 4613125.0, "roasThis": 0.0, "roasPrev": 878.0}, {"name": "EAST_SG_Meta_Conversion_PUR_PR_CPAS-Shopee_MiddaySale_260913_260919", "country": "SG", "channel": "Meta", "spend": 1397773.0, "revenue": 12289247.0, "spendPrev": 206142.0, "roasThis": 879.2, "roasPrev": 450.0}, {"name": "EAST_SG_Meta_Conversion_PUR_TEST_CPAS-Shopee_UA-Catalog_251223_NONE", "country": "SG", "channel": "Meta", "spend": 585441.0, "revenue": 6659895.0, "spendPrev": 1242100.0, "roasThis": 1137.6, "roasPrev": 523.9}, {"name": "EAST_SG_Meta_Conversion_ROAS_OG_CPAS-Shopee_UA_260206_NONE", "country": "SG", "channel": "Meta", "spend": 373957.0, "revenue": 7107839.0, "spendPrev": 721293.0, "roasThis": 1900.7, "roasPrev": 661.8}, {"name": "EAST_SG_Meta_Conversion_ATC_OG_CPAS-Shopee_UA_250214_NONE", "country": "SG", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "EAST_SG_Meta_Conversion_PUR_PR_CPAS-Shopee_NewLaunchingEvent_260901_260905", "country": "SG", "channel": "Meta", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "1.5 Tier", "country": "SG", "channel": "Shopee Ads", "spend": 386316.0, "revenue": 4910593.0, "spendPrev": 733487.0, "roasThis": 1271.1, "roasPrev": 1165.3}, {"name": "2.5 Tier", "country": "SG", "channel": "Shopee Ads", "spend": 751982.0, "revenue": 10294077.0, "spendPrev": 1014910.0, "roasThis": 1368.9, "roasPrev": 1414.6}, {"name": "BUNDLE", "country": "SG", "channel": "Shopee Ads", "spend": 451690.0, "revenue": 5546065.0, "spendPrev": 838034.0, "roasThis": 1227.8, "roasPrev": 1293.7}, {"name": "HERO SKU - Tier2", "country": "SG", "channel": "Shopee Ads", "spend": 248567.0, "revenue": 2999098.0, "spendPrev": 445351.0, "roasThis": 1206.6, "roasPrev": 1373.8}, {"name": "Hyalu-Teca_All 2026-08", "country": "SG", "channel": "Shopee Ads", "spend": 67772.0, "revenue": 894631.0, "spendPrev": 384208.0, "roasThis": 1320.1, "roasPrev": 1122.1}, {"name": "NEW LAUNCH 2026-09", "country": "SG", "channel": "Shopee Ads", "spend": 285635.0, "revenue": 2907400.0, "spendPrev": 351755.0, "roasThis": 1017.9, "roasPrev": 1185.2}, {"name": "Potential SKU", "country": "SG", "channel": "Shopee Ads", "spend": 1107352.0, "revenue": 14227183.0, "spendPrev": 1522362.0, "roasThis": 1284.8, "roasPrev": 1339.0}, {"name": "SKIN1004 Madagascar Centella Ampoule Foam 125ml (Cruelty-Free) [4]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "Shop GMV Max", "country": "SG", "channel": "Shopee Ads", "spend": 660608.0, "revenue": 9013922.0, "spendPrev": 1727687.0, "roasThis": 1364.5, "roasPrev": 1403.5}, {"name": "Sun_All 2026-07", "country": "SG", "channel": "Shopee Ads", "spend": 422334.0, "revenue": 5134153.0, "spendPrev": 970910.0, "roasThis": 1215.7, "roasPrev": 1272.2}, {"name": "[BEST] SKIN1004 Madagascar Centella Hyalu-cica Water-Fit Sun Serum SPF50 PA++++, No White Cast, Long-lasting, Hydrating, Lightweight, for Daily Use | 50ml [6]", "country": "SG", "channel": "Shopee Ads", "spend": 768739.0, "revenue": 11183051.0, "spendPrev": 1699399.0, "roasThis": 1454.7, "roasPrev": 1485.9}, {"name": "[BEST] SKIN1004 Madagascar Centella Light Cleansing Oil for Gentle Double Cleansing, for All Skin Type, for Daily Use | 200ml [5]", "country": "SG", "channel": "Shopee Ads", "spend": 352099.0, "revenue": 5003542.0, "spendPrev": 359104.0, "roasThis": 1421.1, "roasPrev": 1540.3}, {"name": "[BEST] SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule for Brightening, Glow, Niacinamide, Dark Spot Care | 100ml [5]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "NEW LAUNCH", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "SKIN1004 Moisture-Boosting Sun Serum Set (Hyalu-Cica Water-Fit Sun Serum 50ml + Water-Fit Sun Serum 50ml) [4]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}, {"name": "[BEST] SKIN1004 Madagascar Centella Ampoule for Deep and Instant Soothing, for all skin type, for sensitive skin | 55ml/100ml [5]", "country": "SG", "channel": "Shopee Ads", "spend": 0.0, "revenue": 0.0, "spendPrev": 0.0, "roasThis": 0.0, "roasPrev": 0.0}], "campaignsTraffic": [{"name": "EAST_SG_Meta_Traffic_Click_BR_CPAS-Shopee_Partnership_260317_NONE", "country": "SG", "channel": "Meta (BR)", "spend": 257131.0, "clicks": 1006, "spendPrev": 513752.0, "cpcThis": 256, "cpcPrev": 213}]}}, "promoBands": [{"start": "2026-09-13", "end": "2026-09-19", "label": "MidDaySale", "bg": "#ddd6fe", "text": "#5b21b6"}, {"start": "2026-09-14", "end": "2026-09-18", "label": "AffiliateBoost", "bg": "#bfdbfe", "text": "#1e3a8a"}]};
+const fmtWon = n => "₩" + Math.round(n).toLocaleString("ko-KR");
+const fmtNum = n => Math.round(n).toLocaleString("ko-KR");
+const pctChange = (cur, prev) => prev ? ((cur - prev) / prev * 100) : (cur? 100:0);
+function deltaBadge(diff, higherIsBetter=true){
+  const good = higherIsBetter ? diff >= 0 : diff <= 0;
+  const cls = diff === 0 ? "flat" : (good ? "up" : "down");
+  const arrow = diff === 0 ? "→" : (diff > 0 ? "▲" : "▼");
+  return `<span class="delta ${cls}">${arrow} ${Math.abs(diff).toFixed(1)}%</span>`;
+}
+function numSpan(diff, higherIsBetter=true){
+  const good = higherIsBetter ? diff >= 0 : diff <= 0;
+  const cls = diff === 0 ? "" : (good ? "num-up" : "num-down");
+  const arrow = diff === 0 ? "" : (diff > 0 ? "▲" : "▼");
+  return `<span class="${cls}">${arrow} ${Math.abs(diff).toFixed(1)}%</span>`;
+}
+function renderTitle(){
+  document.title = DATA.title + " - 0914주차주차";
+  document.getElementById("reportTitle").textContent = DATA.title;
+}
+function renderKpi(){
+  const el = document.getElementById("kpiRow");
+  el.innerHTML = DATA.kpi.map(k=>{
+    if(k.dir === "info"){
+      return `<div class="kpi-card"> <div class="label">${k.label}</div> <div class="value">${k.value}</div> <div class="delta flat" style="white-space:normal;line-height:1.4;">${k.delta}</div> </div>`;
+    }
+    const isUp = k.delta.trim().startsWith("+");
+    const cls = k.dir === "flat" ? "flat" : (isUp ? "up" : "down");
+    return `<div class="kpi-card"> <div class="label">${k.label}</div> <div class="value">${k.value}</div> <div class="delta ${cls}">${isUp?"▲":"▼"} ${k.delta.replace(/^[+\-]/,"")} WoW</div> </div>`;
+  }).join("");
+}
+function renderInsights(){
+  const el = document.getElementById("insightList");
+  el.innerHTML = DATA.insightSummary.map(s=>`<li>${s}</li>`).join("");
+}
+function renderCountryChannelGrid(){
+  const el = document.getElementById("countryChannelGrid");
+  const countries = [...new Set(DATA.countryMedia.map(d=>d.country))];
+  el.innerHTML = countries.map(c=>{
+    const rows = DATA.countryMedia.filter(d=>d.country===c);
+    const cards = rows.map(r=>{
+      const totalSpend = (r.conv?.spend||0) + (r.traffic?.spend||0);
+      const totalRevenue = (r.conv?.revenue||0) + (r.traffic?.revenue||0);
+      const objLabels = { Meta: {conv:"전환", traffic:"트래픽 (BR)"}, TikTok: {conv:"전환 (GMV Max)", traffic:"트래픽 (TikTok Ads)"} };
+      const lbl = objLabels[r.media] || {conv:"전환", traffic:"트래픽"};
+      let subRows = "";
+      if(r.conv){
+        const diff = pctChange(r.conv.roas, r.conv.roasPrev);
+        const good = diff >= 0;
+        subRows += `<div class="obj-row"> <div><div class="obj-label">${lbl.conv} <span class="tag roas">ROAS 우선</span></div> <div class="obj-sub">지출 ${fmtWon(r.conv.spend)} · 매출 ${fmtWon(r.conv.revenue)}</div></div> <div style="text-align:right;"> <div class="obj-metric" style="color:${good?'var(--good)':'var(--bad)'}">${r.conv.roas}%</div> <div style="font-size:10.5px;">${deltaBadge(diff, true)}</div> </div> </div>`;
+      }
+      if(r.traffic){
+        const diff = pctChange(r.traffic.cpc, r.traffic.cpcPrev);
+        const good = diff <= 0;
+        subRows += `<div class="obj-row"> <div><div class="obj-label">${lbl.traffic} <span class="tag cpc">CPC 우선</span></div> <div class="obj-sub">지출 ${fmtWon(r.traffic.spend)} · 클릭 ${fmtNum(r.traffic.clicks)}</div></div> <div style="text-align:right;"> <div class="obj-metric" style="color:${good?'var(--good)':'var(--bad)'}">${fmtWon(r.traffic.cpc)}</div> <div style="font-size:10.5px;">${deltaBadge(diff, false)}</div> </div> </div>`;
+      }
+      return `<div class="ch-card"> <div class="ch-name">${r.media}${r.mixed?'<span class="tag" style="background:#f3f4f6;color:#6b7280;">전환+트래픽 혼재</span>':''}</div> <div class="ch-total">매체 전체 · 지출 ${fmtWon(totalSpend)} · 매출 ${fmtWon(totalRevenue)}</div> ${subRows} </div>`;
+    }).join("");
+    return `<div class="country-block"> <div class="country-head"><span class="flag-dot ${c.toLowerCase()}"></span><b>${c==='MY'?'말레이시아':'싱가포르'}</b><span>· 매체 ${rows.length}개</span></div> <div class="grid-media">${cards}</div> </div>`;
+  }).join("");
+}
+function promoBandToIdxRange(band){
+  const dates = DATA.daily.dates;
+  let startIdx = dates.findIndex(d => d >= band.start);
+  if(startIdx === -1) return null;
+  let endIdx = -1;
+  for(let i=dates.length-1;i>=0;i--){ if(dates[i] <= band.end){ endIdx = i; break; } }
+  if(endIdx === -1) return null;
+  if(startIdx > endIdx) return null;
+  return {startIdx, endIdx};
+}
+const PROMO_ROW_H = 20, PROMO_ROW_GAP = 3, PROMO_TOP_PAD = 8;
+const promoBandsPlugin = {
+  id: "promoBandsPlugin",
+  beforeDatasetsDraw(chart){
+    const bands = (chart.options.plugins.promoBandsPlugin || {}).bands || [];
+    if(!bands.length) return;
+    const {ctx, chartArea, scales} = chart;
+    const xScale = scales.x;
+    if(!chartArea) return;
+    const step = xScale.getPixelForValue(1) - xScale.getPixelForValue(0);
+    const halfStep = (isFinite(step) ? Math.abs(step) : 40) / 2;
+    ctx.save();
+    let rowIdx = 0;
+    bands.forEach((b)=>{
+      const range = promoBandToIdxRange(b);
+      if(!range) return;
+      const xStart = xScale.getPixelForValue(range.startIdx) - halfStep;
+      const xEnd = xScale.getPixelForValue(range.endIdx) + halfStep;
+      const y = chartArea.top + PROMO_TOP_PAD + rowIdx * (PROMO_ROW_H + PROMO_ROW_GAP);
+      const w = Math.max(2, xEnd - xStart);
+      ctx.fillStyle = b.bg;
+      ctx.fillRect(xStart, y, w, PROMO_ROW_H);
+      ctx.font = "600 10.5px -apple-system,sans-serif";
+      ctx.fillStyle = b.text;
+      ctx.textBaseline = "middle";
+      const label = b.label;
+      const textW = ctx.measureText(label).width;
+      if(textW + 10 <= w){ ctx.textAlign = "center"; ctx.fillText(label, xStart + w/2, y + PROMO_ROW_H/2 + 0.5); }
+      rowIdx++;
+    });
+    ctx.restore();
+  }
+};
+Chart.register(promoBandsPlugin);
+let trendChartInst, convRoasChartInst, trafficCpcChartInst;
+function renderTrendChart(){
+  const ctx = document.getElementById("trendChart");
+  if(trendChartInst) trendChartInst.destroy();
+  const bandRowsNeeded = (DATA.promoBands||[]).filter(b=>promoBandToIdxRange(b)).length;
+  const topPad = bandRowsNeeded ? PROMO_TOP_PAD + bandRowsNeeded*(PROMO_ROW_H+PROMO_ROW_GAP) + 4 : 8;
+  const revArr = DATA.daily.revenue, roasArr = DATA.daily.roas;
+  const maxRevIdx = revArr.indexOf(Math.max(...revArr));
+  const maxRoasIdx = roasArr.indexOf(Math.max(...roasArr));
+  const revenueColors = revArr.map((v,i)=> i===maxRevIdx ? "#f59e0b" : "#3454d1");
+  const roasPointBg = roasArr.map((v,i)=> i===maxRoasIdx ? "#f59e0b" : "#e02424");
+  const roasPointRadius = roasArr.map((v,i)=> i===maxRoasIdx ? 6 : 3);
+  const roasPointBorder = roasArr.map((v,i)=> i===maxRoasIdx ? "#b45309" : "#e02424");
+  trendChartInst = new Chart(ctx, {
+    data:{ labels: DATA.daily.labels, datasets:[
+      {type:"bar", label:"광고비", data:DATA.daily.spend, backgroundColor:"#c7d2fe", yAxisID:"y", borderRadius:4, order:2},
+      {type:"bar", label:"광고매출", data:DATA.daily.revenue, backgroundColor:revenueColors, yAxisID:"y", borderRadius:4, order:2},
+      {type:"line", label:"ROAS(%)", data:DATA.daily.roas, borderColor:"#e02424", pointBackgroundColor:roasPointBg, pointBorderColor:roasPointBorder, pointRadius:roasPointRadius, pointBorderWidth:2, yAxisID:"y1", tension:.35, order:1}
+    ] },
+    options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:topPad}}, interaction:{mode:"index", intersect:false},
+      plugins:{ legend:{position:"bottom", labels:{boxWidth:12,font:{size:11}}}, promoBandsPlugin:{bands: DATA.promoBands || []} },
+      scales:{ y:{position:"left", ticks:{callback:v=>"₩"+(v/1000000).toFixed(0)+"M", font:{size:10}}, grid:{color:"#f1f2f6"}}, y1:{position:"right", ticks:{callback:v=>v+"%", font:{size:10}}, grid:{display:false}} }
+    }
+  });
+}
+function renderChannelCharts(){
+  const cv = DATA.mediaCompareConv;
+  const ctx1 = document.getElementById("convRoasChart");
+  if(convRoasChartInst) convRoasChartInst.destroy();
+  convRoasChartInst = new Chart(ctx1, { type:"bar", data:{labels:cv.labels, datasets:[
+    {label:"전주 ROAS", data:cv.roasPrev, backgroundColor:"#e5e7eb", borderRadius:4},
+    {label:"금주 ROAS", data:cv.roasThis, backgroundColor:"#3454d1", borderRadius:4}
+  ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:"bottom",labels:{boxWidth:12,font:{size:11}}}, title:{display:true,text:"전환 매체 ROAS 비교(%)",font:{size:12}}}, scales:{y:{ticks:{callback:v=>v+"%",font:{size:10}}}} } });
+  const tf = DATA.mediaCompareTraffic;
+  const ctx2 = document.getElementById("trafficCpcChart");
+  if(trafficCpcChartInst) trafficCpcChartInst.destroy();
+  trafficCpcChartInst = new Chart(ctx2, { type:"bar", data:{labels:tf.labels, datasets:[
+    {label:"전주 CPC", data:tf.cpcPrev, backgroundColor:"#e5e7eb", borderRadius:4},
+    {label:"금주 CPC", data:tf.cpcThis, backgroundColor:"#b45309", borderRadius:4}
+  ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:"bottom",labels:{boxWidth:12,font:{size:11}}}, title:{display:true,text:"트래픽 매체 CPC 비교(₩)",font:{size:12}}}, scales:{y:{ticks:{callback:v=>"₩"+v,font:{size:10}}}} } });
+}
+function renderPromoTags(){
+  document.getElementById("promoTags").innerHTML = DATA.promotions.map(p=> `<span class="promo-tag"><b>${p.date}</b> ${p.label}</span>`).join("");
+}
+const CONV_GROUP_ORDER = [ "MY|Meta", "SG|Meta", "MY|TikTok GMV Max", "MY|Shopee Ads", "SG|Shopee Ads", "MY|Google", "SG|Google" ];
+const TRAFFIC_GROUP_ORDER = [ "MY|Meta (BR)", "SG|Meta (BR)", "MY|TikTok" ];
+function groupSort(list, order){
+  const groups = {}; order.forEach(k=>groups[k]=[]);
+  list.forEach(item=>{ const key = item.country+"|"+item.channel; if(!groups[key]) groups[key] = []; groups[key].push(item); });
+  order.forEach(k=> groups[k].sort((a,b)=> b.spend - a.spend));
+  return order.filter(k=>groups[k] && groups[k].length).map(k=>({key:k, items:groups[k]}));
+}
+const GROUP_LABEL = { "MY|Meta":"말레이시아 · Meta (전환)", "SG|Meta":"싱가포르 · Meta (전환)", "MY|TikTok GMV Max":"말레이시아 · TikTok GMV Max (전환)", "MY|Shopee Ads":"말레이시아 · Shopee Ads (전환)", "SG|Shopee Ads":"싱가포르 · Shopee Ads (전환)", "MY|Google":"말레이시아 · Google (전환)", "SG|Google":"싱가포르 · Google (전환)", "MY|Meta (BR)":"말레이시아 · Meta BR (트래픽)", "SG|Meta (BR)":"싱가포르 · Meta BR (트래픽)", "MY|TikTok":"말레이시아 · TikTok (트래픽)" };
+const GROUP_TO_MEDIA = { "MY|Meta":"Meta", "SG|Meta":"Meta", "MY|TikTok GMV Max":"TikTok", "MY|Shopee Ads":"Shopee Ads", "SG|Shopee Ads":"Shopee Ads", "MY|Google":"Google", "SG|Google":"Google", "MY|Meta (BR)":"Meta", "SG|Meta (BR)":"Meta", "MY|TikTok":"TikTok" };
+function getGroupSummary(key, sub){
+  const country = key.split("|")[0];
+  const media = GROUP_TO_MEDIA[key];
+  const entry = DATA.countryMedia.find(m=>m.country===country && m.media===media);
+  return entry ? entry[sub] : null;
+}
+function rowStatusCell(spend, spendPrev, diffBadgeHtml){
+  if(spend === 0) return `<span class="off-tag">OFF</span>`;
+  if(spendPrev === 0) return `<span class="new-tag">NEW</span>`;
+  return diffBadgeHtml;
+}
+function rowStatusClass(spend, spendPrev){
+  if(spend === 0) return "row-off";
+  if(spendPrev === 0) return "row-new";
+  return "";
+}
+function renderCampaignTables(){
+  document.getElementById("convCount").textContent = DATA.campaignsConv.length;
+  document.getElementById("trafficCount").textContent = DATA.campaignsTraffic.length;
+  const convGroups = groupSort(DATA.campaignsConv, CONV_GROUP_ORDER);
+  const convWrap = document.getElementById("convTableWrap");
+  convWrap.innerHTML = `<table> <thead><tr><th>캠페인명</th><th>국가/매체</th><th>지출</th><th>매출</th><th>ROAS(금주)</th><th>ROAS(전주)</th><th>증감</th></tr></thead> <tbody>${convGroups.map(g=>{
+    const sum = getGroupSummary(g.key, "conv");
+    const summaryRow = sum ? (()=>{ const diff = pctChange(sum.roas, sum.roasPrev); return `<tr class="row-summary"> <td colspan="2">${GROUP_LABEL[g.key]} 요약 (${g.items.length}개 캠페인 합계)</td> <td>${fmtWon(sum.spend)}</td> <td>${fmtWon(sum.revenue)}</td> <td>${sum.roas}%</td> <td>${sum.roasPrev}%</td> <td>${numSpan(diff, true)}</td> </tr>`; })() : `<tr><td colspan="7" style="background:var(--gray-100);font-weight:800;color:var(--navy-2);text-align:left;">${GROUP_LABEL[g.key]} · ${g.items.length}개</td></tr>`;
+    const groupId = g.key.replace(/[^A-Za-z0-9]/g,'_');
+    const toggleRow = `<tr class="grp-toggle-row"><td colspan="7"> <button class="grp-toggle-btn" data-group="${groupId}"><span class="arrow">▸</span> 상세 캠페인별 증감률 보기 (${g.items.length}개)</button> </td></tr>`;
+    const comparable = g.items.filter(c=> c.spend>0 && c.spendPrev>0);
+    const diffs = comparable.map(c=> pctChange(c.roasThis, c.roasPrev));
+    const maxDiff = diffs.length ? Math.max(...diffs) : null;
+    const minDiff = diffs.length ? Math.min(...diffs) : null;
+    const bestName = (maxDiff!==null && maxDiff>0) ? comparable[diffs.indexOf(maxDiff)].name : null;
+    const worstName = (minDiff!==null && minDiff<0) ? comparable[diffs.indexOf(minDiff)].name : null;
+    const rows = g.items.map(c=>{
+      const diff = pctChange(c.roasThis, c.roasPrev);
+      let deltaCell = rowStatusCell(c.spend, c.spendPrev, numSpan(diff, true));
+      const statusClass = rowStatusClass(c.spend, c.spendPrev);
+      if(statusClass===""){ if(bestName && c.name===bestName && diff===maxDiff) deltaCell = `<span class="delta-best">${numSpan(diff, true)}</span>`; else if(worstName && c.name===worstName && diff===minDiff) deltaCell = `<span class="delta-worst">${numSpan(diff, true)}</span>`; }
+      return `<tr class="grp-detail grp-${groupId} ${statusClass}"> <td>${c.name}</td> <td><span class="ctry-chip ${c.country.toLowerCase()}">${c.country}</span> ${c.channel}</td> <td>${fmtWon(c.spend)}</td> <td>${fmtWon(c.revenue)}</td> <td><b>${c.roasThis}%</b></td> <td>${c.roasPrev}%</td> <td>${deltaCell}</td> </tr>`;
+    }).join("");
+    return summaryRow + toggleRow + rows;
+  }).join("")}</tbody> </table>`;
+  convWrap.querySelectorAll(".grp-toggle-btn").forEach(btn=>{ btn.addEventListener("click", ()=>{ const gid = btn.dataset.group; const open = btn.classList.toggle("open"); convWrap.querySelectorAll(".grp-"+gid).forEach(tr=> tr.classList.toggle("open", open)); btn.innerHTML = open ? `<span class="arrow">▸</span> 상세 캠페인별 증감률 숨기기` : `<span class="arrow">▸</span> 상세 캠페인별 증감률 보기 (${convWrap.querySelectorAll(".grp-"+gid).length}개)`; }); });
+  const trafficGroups = groupSort(DATA.campaignsTraffic, TRAFFIC_GROUP_ORDER);
+  const trafficWrap = document.getElementById("trafficTableWrap");
+  trafficWrap.innerHTML = `<table> <thead><tr><th>캠페인명</th><th>국가/매체</th><th>지출</th><th>클릭수</th><th>CPC(금주)</th><th>CPC(전주)</th><th>증감</th></tr></thead> <tbody>${trafficGroups.map(g=>{
+    const rows = g.items.map(c=>{ const diff = pctChange(c.cpcThis, c.cpcPrev); const deltaCell = rowStatusCell(c.spend, c.spendPrev, numSpan(diff, false)); const statusClass = rowStatusClass(c.spend, c.spendPrev); return `<tr class="${statusClass}"> <td>${c.name}</td> <td><span class="ctry-chip ${c.country.toLowerCase()}">${c.country}</span> ${c.channel}</td> <td>${fmtWon(c.spend)}</td> <td>${fmtNum(c.clicks)}</td> <td><b>${fmtWon(c.cpcThis)}</b></td> <td>${fmtWon(c.cpcPrev)}</td> <td>${deltaCell}</td> </tr>`; }).join("");
+    return `<tr><td colspan="7" style="background:var(--gray-100);font-weight:800;color:var(--navy-2);text-align:left;">${GROUP_LABEL[g.key]} · ${g.items.length}개</td></tr>${rows}`;
+  }).join("")}</tbody> </table>`;
+}
+function renderGallery(filter="ALL"){
+  const grid = document.getElementById("galleryGrid");
+  const items = DATA.gallery.filter(g => filter==="ALL" || g.country===filter || g.rank.includes(filter));
+  grid.innerHTML = items.map(g=>{
+    const isBest = g.rank.startsWith("BEST");
+    const isMeta = g.channel.includes('Meta');
+    const useCapture = g.img && isMeta;
+    const thumbStyle = (g.img && !useCapture) ? ` style="background-image:url('${g.img}');background-size:cover;background-position:top center;"` : '';
+    const shapeClass = useCapture ? 'thumb-capture' : (isMeta ? 'thumb-square' : (g.channel.includes('TikTok') ? 'thumb-vertical' : ''));
+    const thumbInner = useCapture ? `<img class="capture-img" src="${g.img}" alt="${g.title}">` : '';
+    return `<div class="g-card"> <div class="g-thumb ${shapeClass} ${g.img ? '' : g.type}"${thumbStyle}> <span class="g-rank ${isBest?'best':'worst'}">${g.rank}</span> ${thumbInner} ${g.img ? '' : `<small>${g.type==='video'?'영상':'이미지'} 소재(자리표시)</small>`} </div> <div class="g-body"> <div class="g-title">${g.title}</div> <div class="g-meta"><span class="ctry-chip ${g.country.toLowerCase()}">${g.country}</span><span>${g.channel}</span></div> <div class="g-metric" style="color:${g.tagClass==='good'?'var(--good)':'var(--bad)'}">${g.metric}</div> ${g.criteria ? `<div class="g-criteria">${g.criteria}</div>` : ''} ${g.url ? `<a class="g-preview-btn" href="${g.url}" target="_blank" rel="noopener">소재 미리보기 ↗</a>` : ''} </div> </div>`;
+  }).join("");
+}
+function renderGalleryFilter(){
+  const opts = ["ALL","MY","SG","BEST","WORST"];
+  const labels = {ALL:"전체", MY:"말레이시아", SG:"싱가포르", BEST:"Best만", WORST:"Worst만"};
+  const el = document.getElementById("galleryFilter");
+  el.innerHTML = opts.map((o,i)=>`<button class="${i===0?'active':''}" data-f="${o}">${labels[o]}</button>`).join("");
+  el.querySelectorAll("button").forEach(b=>{ b.addEventListener("click", ()=>{ el.querySelectorAll("button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); renderGallery(b.dataset.f); }); });
+}
+function renderInsightNotes(){
+  const el = document.getElementById("insightNotesWrap");
+  if(!el || !DATA.insightNotes) return;
+  el.innerHTML = DATA.insightNotes.map(n=>{
+    const factsHtml = `<ul class="note-fact">${n.facts.map(f=>`<li>${f}</li>`).join("")}</ul>`;
+    const todoHtml = `<ol>${(n.nextTodo||[]).map(t=>`<li>${t}</li>`).join("")}</ol>`;
+    if(n.reviewed){
+      return `<div class="note-card"> <div class="note-title">${n.title}</div> <div class="note-block"> <div class="note-label">사실 (1차 데이터)</div> ${factsHtml} </div> <div class="note-block"> <div class="note-label">원인 분석</div> <p style="font-size:12.5px;line-height:1.7;margin:0;">${n.analysis}</p> </div> <div class="note-block"> <div class="note-label">Next To-Do</div> <div style="font-size:12.5px;line-height:1.75;">${todoHtml}</div> </div> </div>`;
+    }
+    return `<div class="note-card"> <div class="note-title">${n.title}</div> <div class="note-block"> <div class="note-label">사실 (1차 데이터)</div> ${factsHtml} </div> <div class="note-block"> <div class="note-label"><span class="draft-tag">AI 초안 · 검토 필요</span> 원인 분석</div> <div class="draft-box"><p>${n.analysis}</p></div> </div> <div class="note-block"> <div class="note-label"><span class="draft-tag">AI 초안 · 검토 필요</span> Next To-Do</div> <div class="draft-box">${todoHtml}</div> </div> </div>`;
+  }).join("");
+}
+function renderAccordion(){
+  const el = document.getElementById("accordionWrap");
+  el.innerHTML = Object.entries(DATA.countries).map(([code, d], idx)=>{
+    const label = code==='MY' ? '말레이시아' : '싱가포르';
+    return `<div class="acc ${idx===0?'open':''}"> <div class="acc-head" data-acc="${code}"><span><span class="ctry-chip ${code.toLowerCase()}">${code}</span> ${label} 전체 캠페인 (${d.campaignsConv.length + d.campaignsTraffic.length}개)</span><span class="arrow">▸</span></div> <div class="acc-body"> <h3 style="font-size:12.5px;margin:4px 0 8px;color:var(--gray-700);">전환 캠페인 (ROAS 우선) · ${d.campaignsConv.length}개</h3> <div class="table-scroll"><table> <thead><tr><th>캠페인명</th><th>매체</th><th>지출</th><th>매출</th><th>ROAS(금주)</th><th>ROAS(전주)</th></tr></thead> <tbody>${d.campaignsConv.map(c=>`<tr><td>${c.name}</td><td>${c.channel}</td><td>${fmtWon(c.spend)}</td><td>${fmtWon(c.revenue)}</td><td>${c.roasThis}%</td><td>${c.roasPrev}%</td></tr>`).join("")}</tbody> </table></div> <h3 style="font-size:12.5px;margin:16px 0 8px;color:var(--gray-700);">트래픽 캠페인 (CPC 우선) · ${d.campaignsTraffic.length}개</h3> <div class="table-scroll"><table> <thead><tr><th>캠페인명</th><th>매체</th><th>지출</th><th>클릭</th><th>CPC(금주)</th><th>CPC(전주)</th></tr></thead> <tbody>${d.campaignsTraffic.map(c=>`<tr><td>${c.name}</td><td>${c.channel}</td><td>${fmtWon(c.spend)}</td><td>${fmtNum(c.clicks)}</td><td>${fmtWon(c.cpcThis)}</td><td>${fmtWon(c.cpcPrev)}</td></tr>`).join("")}</tbody> </table></div> <div class="note-box">상품(SKU)별·인플루언서별 실적 데이터는 이번 raw data(mint/shopee 탭)에 없어 제외했습니다. 별도 소스가 있으면 알려주세요.</div> </div> </div>`;
+  }).join("");
+  el.querySelectorAll(".acc-head").forEach(h=>{ h.addEventListener("click", ()=> h.closest(".acc").classList.toggle("open")); });
+}
+document.querySelectorAll(".tab-btn").forEach(btn=>{ btn.addEventListener("click", ()=>{ document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("active")); document.getElementById("tab-"+btn.dataset.tab).classList.add("active"); if(btn.dataset.tab === "trend"){ renderTrendChart(); renderChannelCharts(); } }); });
+document.querySelectorAll(".sub-btn").forEach(btn=>{ btn.addEventListener("click", ()=>{ document.querySelectorAll(".sub-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); document.getElementById("convSection").style.display = btn.dataset.sub==="conv" ? "" : "none"; document.getElementById("trafficTableWrap").style.display = btn.dataset.sub==="traffic" ? "" : "none"; }); });
+renderTitle(); renderKpi(); renderInsights(); renderCountryChannelGrid(); renderPromoTags(); renderCampaignTables(); renderGalleryFilter(); renderGallery(); renderInsightNotes(); renderAccordion(); renderTrendChart(); renderChannelCharts();
+
+</script>
+</body>
+</html>
